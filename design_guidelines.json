@@ -1,0 +1,125 @@
+{
+  "identity": {
+    "name": "The Void Navigator",
+    "meta_title": "Orbital Mechanics | Interactive 4D Space Lab",
+    "tone": "Scientific, Cinematic, Precision-Engineered",
+    "aesthetic": "Deep Space HUD, Glassmorphism, Realistic 3D",
+    "target_audience": "Students, Space Enthusiasts, Intermediate Learners"
+  },
+  "typography": {
+    "primary_font": "Outfit",
+    "secondary_font": "Rajdhani",
+    "mono_font": "JetBrains Mono",
+    "scale": {
+      "h1": "text-6xl md:text-8xl font-medium tracking-tight font-secondary uppercase",
+      "h2": "text-4xl md:text-5xl font-semibold tracking-tight font-secondary uppercase",
+      "h3": "text-2xl md:text-3xl font-medium font-secondary text-cyan-400",
+      "body": "text-base md:text-lg leading-relaxed text-slate-300 font-primary",
+      "label": "text-xs font-mono tracking-widest text-slate-500 uppercase",
+      "data": "text-sm font-mono text-cyan-300"
+    }
+  },
+  "colors": {
+    "background": {
+      "default": "#030305",
+      "surface": "#0B1015",
+      "overlay": "rgba(11, 16, 21, 0.6)"
+    },
+    "brand": {
+      "primary": "#00F0FF",
+      "secondary": "#7000FF",
+      "accent": "#FFD700"
+    },
+    "functional": {
+      "success": "#00FF94",
+      "warning": "#FFB800",
+      "error": "#FF3B30",
+      "info": "#00F0FF"
+    },
+    "gradients": {
+      "hero": "linear-gradient(to bottom, transparent, #030305)",
+      "glass": "linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)",
+      "border_glow": "linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.5), transparent)"
+    }
+  },
+  "layout": {
+    "container": "max-w-7xl mx-auto px-6 md:px-12",
+    "spacing": {
+      "section_gap": "py-24 md:py-32",
+      "element_gap": "gap-8"
+    },
+    "grid_system": "grid grid-cols-1 md:grid-cols-12 gap-6",
+    "glass_panel": "backdrop-blur-xl bg-black/40 border border-white/10 rounded-xl shadow-2xl"
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-cyan-500 text-black font-bold uppercase tracking-widest hover:bg-cyan-400 transition-all duration-300 shadow-[0_0_20px_rgba(0,240,255,0.3)] hover:shadow-[0_0_40px_rgba(0,240,255,0.5)]",
+      "secondary": "bg-transparent border border-white/20 text-white hover:border-cyan-400 hover:text-cyan-400 uppercase tracking-widest transition-all",
+      "icon": "p-2 rounded-full hover:bg-white/10 transition-colors"
+    },
+    "cards": {
+      "feature": "group relative p-8 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-cyan-500/50 transition-all duration-500 overflow-hidden",
+      "orbit_stat": "flex flex-col gap-1 p-4 rounded-lg bg-black/60 border-l-2 border-cyan-500 backdrop-blur-md"
+    },
+    "inputs": {
+      "slider": "accent-cyan-500",
+      "select": "bg-black/50 border-white/10 text-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+    }
+  },
+  "visual_enhancers": {
+    "glow_effects": "drop-shadow-[0_0_15px_rgba(0,240,255,0.5)]",
+    "grid_lines": "bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]",
+    "noise_texture": "opacity-20 pointer-events-none fixed inset-0 z-50 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"
+  },
+  "three_strategy": {
+    "engine": "React Three Fiber (R3F)",
+    "controls": "OrbitControls (Drei)",
+    "environment": "Stars (Drei)",
+    "textures": {
+      "earth_day": "https://www.solarsystemscope.com/textures/download/8k_earth_daymap.jpg",
+      "earth_night": "https://www.solarsystemscope.com/textures/download/8k_earth_nightmap.jpg",
+      "earth_clouds": "https://www.solarsystemscope.com/textures/download/8k_earth_clouds.jpg",
+      "earth_normal": "https://www.solarsystemscope.com/textures/download/8k_earth_normal_map.jpg",
+      "earth_specular": "https://www.solarsystemscope.com/textures/download/8k_earth_specular_map.jpg",
+      "moon": "https://www.solarsystemscope.com/textures/download/8k_moon.jpg",
+      "stars_bg": "https://www.solarsystemscope.com/textures/download/8k_stars_milky_way.jpg"
+    },
+    "orbit_visualization": {
+      "line_width": 2,
+      "color_leo": "#00F0FF",
+      "color_meo": "#00FF94",
+      "color_geo": "#FFD700",
+      "color_heo": "#FF3B30"
+    }
+  },
+  "image_urls": {
+    "hero_bg": "https://images.unsplash.com/photo-1694902304153-ffed849ca876?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNzl8MHwxfHNlYXJjaHw0fHxzdGFyZmllbGQlMjBnYWxheHklMjBiYWNrZ3JvdW5kJTIwdGV4dHVyZXxlbnwwfHx8fDE3NzE0ODMwMjV8MA&ixlib=rb-4.1.0&q=85",
+    "nebula_bg": "https://images.unsplash.com/photo-1767188789485-54e0922d76a8?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNzl8MHwxfHNlYXJjaHwzfHxzdGFyZmllbGQlMjBnYWxheHklMjBiYWNrZ3JvdW5kJTIwdGV4dHVyZXxlbnwwfHx8fDE3NzE0ODMwMjV8MA&ixlib=rb-4.1.0&q=85",
+    "starfield": "https://images.unsplash.com/photo-1768326947896-9f3f291ddbe9?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNzl8MHwxfHNlYXJjaHwxfHxzdGFyZmllbGQlMjBnYWxheHklMjBiYWNrZ3JvdW5kJTIwdGV4dHVyZXxlbnwwfHx8fDE3NzE0ODMwMjV8MA&ixlib=rb-4.1.0&q=85",
+    "milky_way": "https://images.pexels.com/photos/1376766/nature-milky-way-galaxy-space-1376766.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  },
+  "instructions_to_main_agent": {
+    "general": "You are building a high-fidelity 3D educational platform. Do not compromise on visual quality. Use R3F for all 3D elements. The UI must float above the 3D scene like a HUD.",
+    "orbit_logic": "Implement accurate orbital mechanics logic (Keplerian elements). Allow users to adjust semi-major axis, eccentricity, inclination, etc., and see the orbit update in real-time.",
+    "gamification": "Create a 'Mission Control' dashboard where users track their points. Unlocking orbits should feel like a major achievement with sound effects (optional) and visual flair.",
+    "responsiveness": "The 3D scene must resize correctly. On mobile, simplify the controls but keep the 3D interactive.",
+    "performance": "Use `useFrame` sparingly for logic. Memoize heavy calculations. Use `instancedMesh` if rendering many objects (like debris).",
+    "assets": "Use the provided Texture URLs for the Earth material. If they fail to load, fallback to a wireframe blue earth or a simple color sphere."
+  },
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "You tend to converge toward generic outputs. Avoid this.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur).",
+    "You MUST NOT apply universal transition. Eg: `transition: all`. This results in breaking transforms. Always add transitions for specific interactive elements.",
+    "You MUST NOT center align the app container. This disrupts the human natural reading flow of text.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations.",
+    "NEVER use AI assistant Emoji characters for icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Subtle grain textures, noise overlays, custom cursors: separates good from extraordinary.",
+    "Components MUST use named exports.",
+    "Pages MUST use default exports.",
+    "Use `sonner` for toasts."
+  ]
+}
