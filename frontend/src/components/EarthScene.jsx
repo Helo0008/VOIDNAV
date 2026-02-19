@@ -76,7 +76,7 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive }) {
     scene.add(dirLight2);
     objects.push(dirLight2);
     scene.add(ambientLight, dirLight, pointLight);
-    objects.push(ambientLight, dirLight, pointLight);
+    objects.push(ambientLight, dirLight, pointLight, dirLight2);
 
     // Starfield
     const starCount = 4000;
