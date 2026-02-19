@@ -66,11 +66,15 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive }) {
     const objects = [];
 
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.22);
-    const dirLight = new THREE.DirectionalLight(0xfff8ee, 1.8);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.55);
+    const dirLight = new THREE.DirectionalLight(0xfff8ee, 2.0);
     dirLight.position.set(8, 4, 6);
-    const pointLight = new THREE.PointLight(0x1144cc, 0.12);
+    const dirLight2 = new THREE.DirectionalLight(0xaaccff, 0.3);
+    dirLight2.position.set(-6, -3, -4);
+    const pointLight = new THREE.PointLight(0x1144cc, 0.15);
     pointLight.position.set(-8, -4, -8);
+    scene.add(dirLight2);
+    objects.push(dirLight2);
     scene.add(ambientLight, dirLight, pointLight);
     objects.push(ambientLight, dirLight, pointLight);
 
