@@ -112,6 +112,8 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive }) {
       (tex) => {
         tex.colorSpace = THREE.SRGBColorSpace;
         earthMat.map = tex;
+        earthMat.color.setHex(0xffffff);
+        earthMat.emissive.setHex(0x000000);
         earthMat.needsUpdate = true;
       },
       undefined,
