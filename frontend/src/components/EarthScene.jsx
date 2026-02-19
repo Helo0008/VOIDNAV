@@ -1,12 +1,10 @@
 import React, { useRef, useMemo, useState, useEffect } from 'react';
-import { Canvas, useFrame, extend } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-
-// Extend Three.js catalog
-extend(THREE);
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 const EARTH_R = 2.0;
+const EARTH_TEXTURE_URL = 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_atmos_2048.jpg';
 
 // Compute 3D orbit points from Keplerian-inspired parameters
 export function computeOrbitPoints(semiMajor, eccentricity, inclination, raan, numPoints = 200) {
@@ -31,150 +29,162 @@ export function computeOrbitPoints(semiMajor, eccentricity, inclination, raan, n
   return pts;
 }
 
-// Custom starfield without drei
-function StarField() {
-  const count = 4000;
-  const positions = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
+// Camera controls using Three.js OrbitControls directly
+function CameraControls({ enabled }) {
+  const { camera, gl } = useThree();
+  const controlsRef = useRef(null);
+
+  useEffect(() => {
+    if (!enabled) return;
+    const controls = new OrbitControls(camera, gl.domElement);
+    controls.enablePan = false;
+    controls.minDistance = 3.5;
+    controls.maxDistance = 30;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.06;
+    controls.rotateSpeed = 0.7;
+    controlsRef.current = controls;
+    return () => { controls.dispose(); };
+  }, [camera, gl, enabled]);
+
+  useFrame(() => {
+    if (controlsRef.current) controlsRef.current.update();
+  });
+
+  return null;
+}
+
+// The full scene using useThree to manage objects directly
+function SpaceScene({ activeOrbits, selectedOrbit, interactive }) {
+  const { scene, camera } = useThree();
+  const earthRef = useRef(null);
+  const satelliteRefs = useRef({});
+  const satelliteTimers = useRef({});
+
+  // Build scene on mount
+  useEffect(() => {
+    const objects = [];
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.22);
+    const dirLight = new THREE.DirectionalLight(0xfff8ee, 1.8);
+    dirLight.position.set(8, 4, 6);
+    const pointLight = new THREE.PointLight(0x1144cc, 0.12);
+    pointLight.position.set(-8, -4, -8);
+    scene.add(ambientLight, dirLight, pointLight);
+    objects.push(ambientLight, dirLight, pointLight);
+
+    // Starfield
+    const starCount = 4000;
+    const starPositions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       const r = 120 + Math.random() * 80;
-      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-      pos[i * 3 + 2] = r * Math.cos(phi);
+      starPositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      starPositions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      starPositions[i * 3 + 2] = r * Math.cos(phi);
     }
-    return pos;
-  }, []);
+    const starGeo = new THREE.BufferGeometry();
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.25, sizeAttenuation: true, transparent: true, opacity: 0.85 });
+    const stars = new THREE.Points(starGeo, starMat);
+    scene.add(stars);
+    objects.push(stars);
 
-  const geo = useMemo(() => {
-    const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    return g;
-  }, [positions]);
+    // Earth sphere
+    const earthGeo = new THREE.SphereGeometry(EARTH_R, 64, 64);
+    const earthMat = new THREE.MeshPhongMaterial({ color: 0x1a3d6e, emissive: 0x060f1e, shininess: 25 });
+    const earth = new THREE.Mesh(earthGeo, earthMat);
+    earthRef.current = earth;
+    scene.add(earth);
+    objects.push(earth);
 
-  return (
-    <points geometry={geo}>
-      <pointsMaterial color="#ffffff" size={0.25} sizeAttenuation transparent opacity={0.85} />
-    </points>
-  );
-}
-
-function EarthMesh() {
-  const earthRef = useRef();
-  const [texture, setTexture] = useState(null);
-
-  useEffect(() => {
-    const loader = new THREE.TextureLoader();
-    loader.crossOrigin = 'anonymous';
-    loader.load(
-      'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_atmos_2048.jpg',
-      (tex) => { tex.colorSpace = THREE.SRGBColorSpace; setTexture(tex); },
+    // Load Earth texture
+    const textureLoader = new THREE.TextureLoader();
+    textureLoader.crossOrigin = 'anonymous';
+    textureLoader.load(
+      EARTH_TEXTURE_URL,
+      (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        earthMat.map = tex;
+        earthMat.needsUpdate = true;
+      },
       undefined,
-      () => setTexture('error')
+      () => {} // fallback to blue planet
     );
-  }, []);
 
-  useFrame((_, delta) => {
-    if (earthRef.current) earthRef.current.rotation.y += delta * 0.025;
-  });
+    // Atmosphere
+    const atmoGeo = new THREE.SphereGeometry(EARTH_R * 1.025, 32, 32);
+    const atmoMat = new THREE.MeshPhongMaterial({ color: 0x4499ff, transparent: true, opacity: 0.1, side: THREE.BackSide });
+    const atmo = new THREE.Mesh(atmoGeo, atmoMat);
+    scene.add(atmo);
+    objects.push(atmo);
 
-  return (
-    <group>
-      <mesh ref={earthRef}>
-        <sphereGeometry args={[EARTH_R, 64, 64]} />
-        {texture && texture !== 'error'
-          ? <meshPhongMaterial map={texture} specular={new THREE.Color(0x1133aa)} shininess={35} />
-          : <meshPhongMaterial color="#1a3d6e" emissive="#060f1e" shininess={25} />
-        }
-      </mesh>
-      {/* Atmosphere inner */}
-      <mesh>
-        <sphereGeometry args={[EARTH_R * 1.025, 32, 32]} />
-        <meshPhongMaterial color="#4499ff" transparent opacity={0.1} side={THREE.BackSide} depthWrite={false} />
-      </mesh>
-      {/* Outer glow */}
-      <mesh>
-        <sphereGeometry args={[EARTH_R * 1.1, 32, 32]} />
-        <meshPhongMaterial color="#1155ff" transparent opacity={0.035} side={THREE.BackSide} depthWrite={false} />
-      </mesh>
-    </group>
-  );
-}
+    return () => {
+      objects.forEach(o => { scene.remove(o); if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); });
+    };
+  }, [scene]);
 
-function OrbitLine({ orbit, opacity }) {
-  const geo = useMemo(() => {
-    const pts = computeOrbitPoints(orbit.semiMajor, orbit.eccentricity, orbit.inclination, orbit.raan);
-    return new THREE.BufferGeometry().setFromPoints(pts);
-  }, [orbit.semiMajor, orbit.eccentricity, orbit.inclination, orbit.raan]);
-
-  const mat = useMemo(
-    () => new THREE.LineBasicMaterial({ color: orbit.color, transparent: true, opacity }),
-    [orbit.color, opacity]
-  );
-
+  // Build orbit lines and satellites
   useEffect(() => {
-    mat.opacity = opacity;
-  }, [mat, opacity]);
+    if (!activeOrbits.length) return;
+    const orbitObjects = [];
 
-  return <primitive object={new THREE.Line(geo, mat)} />;
-}
+    activeOrbits.forEach(orbit => {
+      if (!orbit) return;
+      const isHighlighted = selectedOrbit?.id === orbit.id;
+      const opacity = isHighlighted ? 0.95 : (selectedOrbit ? 0.2 : 0.6);
+      const points = computeOrbitPoints(orbit.semiMajor, orbit.eccentricity, orbit.inclination, orbit.raan);
 
-function OrbitSatellite({ orbit, points, isHighlighted }) {
-  const meshRef = useRef();
-  const tRef = useRef(Math.random());
+      // Orbit line
+      const geo = new THREE.BufferGeometry().setFromPoints(points);
+      const mat = new THREE.LineBasicMaterial({ color: orbit.color, transparent: true, opacity });
+      const line = new THREE.Line(geo, mat);
+      scene.add(line);
+      orbitObjects.push({ object: line, geo, mat });
+
+      // Satellite dot
+      const satGeo = new THREE.SphereGeometry(isHighlighted ? 0.075 : 0.05, 8, 8);
+      const satMat = new THREE.MeshBasicMaterial({ color: orbit.color });
+      const sat = new THREE.Mesh(satGeo, satMat);
+      scene.add(sat);
+      orbitObjects.push({ object: sat, geo: satGeo, mat: satMat });
+
+      // Store refs for animation
+      satelliteRefs.current[orbit.id] = { sat, points };
+      satelliteTimers.current[orbit.id] = Math.random();
+    });
+
+    return () => {
+      orbitObjects.forEach(({ object, geo, mat }) => {
+        scene.remove(object);
+        geo.dispose();
+        mat.dispose();
+      });
+      satelliteRefs.current = {};
+      satelliteTimers.current = {};
+    };
+  }, [scene, activeOrbits, selectedOrbit]);
 
   useFrame((_, delta) => {
-    const spd = orbit.speed || 0.1;
-    tRef.current = (tRef.current + spd * delta * 0.15) % 1;
-    const idx = Math.floor(tRef.current * (points.length - 1));
-    if (meshRef.current && points[idx]) {
-      meshRef.current.position.copy(points[idx]);
-    }
+    // Rotate Earth
+    if (earthRef.current) earthRef.current.rotation.y += delta * 0.025;
+
+    // Animate satellites
+    Object.entries(satelliteRefs.current).forEach(([id, { sat, points }]) => {
+      const orbit = activeOrbits.find(o => o?.id === id);
+      if (!orbit || !points.length) return;
+      const spd = (orbit.speed || 0.1) * 0.15;
+      satelliteTimers.current[id] = (satelliteTimers.current[id] + spd * delta) % 1;
+      const idx = Math.floor(satelliteTimers.current[id] * (points.length - 1));
+      if (points[idx]) sat.position.copy(points[idx]);
+    });
   });
 
-  const size = isHighlighted ? 0.075 : 0.05;
-  return (
-    <mesh ref={meshRef}>
-      <sphereGeometry args={[size, 8, 8]} />
-      <meshBasicMaterial color={orbit.color} />
-    </mesh>
-  );
-}
-
-function SceneContent({ activeOrbits, selectedOrbit, interactive }) {
   return (
     <>
-      <ambientLight intensity={0.22} />
-      <directionalLight position={[8, 4, 6]} intensity={1.8} color="#fff8ee" />
-      <pointLight position={[-8, -4, -8]} intensity={0.12} color="#1144cc" />
-
-      <StarField />
-      <EarthMesh />
-
-      {activeOrbits.map(orbit => {
-        if (!orbit) return null;
-        const isHighlighted = selectedOrbit?.id === orbit.id;
-        const opacity = isHighlighted ? 0.95 : (selectedOrbit ? 0.18 : 0.55);
-        const points = computeOrbitPoints(orbit.semiMajor, orbit.eccentricity, orbit.inclination, orbit.raan);
-        return (
-          <group key={orbit.id}>
-            <OrbitLine orbit={orbit} opacity={opacity} />
-            <OrbitSatellite orbit={orbit} points={points} isHighlighted={isHighlighted} />
-          </group>
-        );
-      })}
-
-      {interactive && (
-        <OrbitControls
-          enablePan={false}
-          minDistance={3.5}
-          maxDistance={30}
-          enableDamping
-          dampingFactor={0.06}
-          rotateSpeed={0.7}
-        />
-      )}
+      <CameraControls enabled={interactive} />
     </>
   );
 }
@@ -194,7 +204,7 @@ export function EarthScene({
         dpr={[1, 1.5]}
         style={{ background: '#030305' }}
       >
-        <SceneContent
+        <SpaceScene
           activeOrbits={activeOrbits.filter(Boolean)}
           selectedOrbit={selectedOrbit}
           interactive={interactive}
