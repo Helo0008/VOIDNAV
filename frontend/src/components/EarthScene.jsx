@@ -268,10 +268,13 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
       const isHighlighted = selectedOrbit?.id === e.orbit.id;
       const opacity = isHighlighted ? 0.95 : (selectedOrbit ? 0.18 : 0.65);
       e.lineMat.opacity = opacity;
-      e.trailMat.opacity = isHighlighted ? 0.55 : 0.25;
+      e.trailMat.opacity = isHighlighted ? 0.85 : 0.5;
       e.satMat.color.setStyle(e.orbit.color);
-      const size = isHighlighted ? 0.08 : 0.055;
       e.sat.scale.setScalar(isHighlighted ? 1.4 : 1);
+      if (e.glow) {
+        e.glow.scale.setScalar(isHighlighted ? 0.8 : 0.55);
+        e.glow.material.opacity = isHighlighted ? 0.7 : 0.4;
+      }
     });
   }, [selectedOrbit]);
 
