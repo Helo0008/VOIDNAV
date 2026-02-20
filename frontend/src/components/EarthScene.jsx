@@ -52,33 +52,42 @@ function findIdx(times, t) {
   return lo;
 }
 
-// Camera smooth control
-function CameraControls({ enabled, targetRef, autoRotate }) {
+// Camera control — one-shot transitions only, then free user control
+function CameraControls({ enabled, targetRef }) {
   const { camera, gl } = useThree();
   const controlsRef = useRef(null);
-  const isUserInteracting = useRef(false);
+  const lastTarget = useRef(new THREE.Vector3());
+  const transitioning = useRef(false);
+  const transProgress = useRef(0);
+  const transFrom = useRef(new THREE.Vector3());
 
   useEffect(() => {
     if (!enabled) return;
     const controls = new OrbitControls(camera, gl.domElement);
     controls.enablePan = false;
-    controls.minDistance = 3.5;
-    controls.maxDistance = 30;
+    controls.minDistance = 3;
+    controls.maxDistance = 80;
     controls.enableDamping = true;
     controls.dampingFactor = 0.07;
     controls.rotateSpeed = 0.8;
-    controls.addEventListener('start', () => { isUserInteracting.current = true; });
-    controls.addEventListener('end', () => { setTimeout(() => { isUserInteracting.current = false; }, 1500); });
     controlsRef.current = controls;
     return () => controls.dispose();
   }, [camera, gl, enabled]);
 
   useFrame((_, delta) => {
     if (controlsRef.current) controlsRef.current.update();
-
-    // Smooth camera transition toward target
-    if (targetRef?.current && !isUserInteracting.current) {
-      camera.position.lerp(targetRef.current, delta * 1.2);
+    // Detect target change → one-shot animated transition, then stop
+    if (targetRef?.current && !targetRef.current.equals(lastTarget.current)) {
+      transFrom.current.copy(camera.position);
+      lastTarget.current.copy(targetRef.current);
+      transitioning.current = true;
+      transProgress.current = 0;
+    }
+    if (transitioning.current) {
+      transProgress.current = Math.min(transProgress.current + delta * 1.5, 1);
+      const ease = 1 - Math.pow(1 - transProgress.current, 3);
+      camera.position.lerpVectors(transFrom.current, lastTarget.current, ease);
+      if (transProgress.current >= 1) transitioning.current = false;
     }
   });
   return null;
