@@ -13,6 +13,7 @@ export default function Learn() {
   const { progress, markLessonComplete, addPoints, isOrbitUnlocked, isLessonComplete } = useProgress();
   const [selectedId, setSelectedId] = useState(orbitId || 'leo');
   const [stepIndex, setStepIndex] = useState(0);
+  const [showLabels, setShowLabels] = useState(true);
 
   useEffect(() => {
     if (orbitId && ORBITS[orbitId]) {
@@ -105,6 +106,7 @@ export default function Learn() {
               activeOrbits={[orbit]}
               selectedOrbit={orbit}
               height="100%"
+              showLabels={showLabels}
               cameraPosition={[0, 3, orbit?.semiMajor ? orbit.semiMajor * 2.2 : 10]}
             />
             {/* Orbit info overlay */}
