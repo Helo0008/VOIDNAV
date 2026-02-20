@@ -14,6 +14,7 @@ export default function Learn() {
   const [selectedId, setSelectedId] = useState(orbitId || 'leo');
   const [stepIndex, setStepIndex] = useState(0);
   const [showLabels, setShowLabels] = useState(true);
+  const [showForces, setShowForces] = useState(false);
 
   useEffect(() => {
     if (orbitId && ORBITS[orbitId]) {
