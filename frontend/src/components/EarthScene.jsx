@@ -225,13 +225,15 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
       const line = new THREE.Line(lineGeo, lineMat);
       scene.add(line);
 
-      // Trail
+      // Trail with vertex colors for gradient fade
       const trailBuf = new Array(TRAIL_LEN).fill(null).map(() => new THREE.Vector3());
       const trailPos = new Float32Array(TRAIL_LEN * 3);
+      const trailColorArr = new Float32Array(TRAIL_LEN * 3);
       const trailGeo = new THREE.BufferGeometry();
       trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPos, 3));
+      trailGeo.setAttribute('color', new THREE.BufferAttribute(trailColorArr, 3));
       trailGeo.setDrawRange(0, 0);
-      const trailMat = new THREE.LineBasicMaterial({ color: orbit.color, transparent: true, opacity: 0.4 });
+      const trailMat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.75 });
       const trailLine = new THREE.Line(trailGeo, trailMat);
       trailLine.frustumCulled = false;
       scene.add(trailLine);
@@ -242,15 +244,19 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
       const sat = new THREE.Mesh(satGeo, satMat);
       scene.add(sat);
 
+      // Satellite glow
+      const glow = createGlowSprite(orbit.color);
+      scene.add(glow);
+
       // Label sprite
       const label = createLabelSprite(orbit.shortName, orbit.color);
       label.visible = false;
       scene.add(label);
 
       orbitMapRef.current[orbit.id] = {
-        orbit, line, lineMat, sat, satMat,
+        orbit, line, lineMat, sat, satMat, glow,
         trailLine, trailGeo, trailMat, trailBuf, trailHead: 0, trailCount: 0,
-        label, points, times,
+        label, points, times, trailColor: new THREE.Color(orbit.color),
         t: Math.random(),
       };
     });
