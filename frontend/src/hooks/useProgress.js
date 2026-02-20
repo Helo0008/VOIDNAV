@@ -14,7 +14,14 @@ export function useProgress() {
   const [progress, setProgress] = useState(() => {
     try {
       const stored = localStorage.getItem('voidnav_progress');
-      return stored ? { ...DEFAULT_PROGRESS, ...JSON.parse(stored) } : DEFAULT_PROGRESS;
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // Merge unlocked orbits so new defaults always apply
+        const merged = { ...DEFAULT_PROGRESS, ...parsed };
+        merged.unlockedOrbits = [...new Set([...DEFAULT_PROGRESS.unlockedOrbits, ...(parsed.unlockedOrbits || [])])];
+        return merged;
+      }
+      return DEFAULT_PROGRESS;
     } catch {
       return DEFAULT_PROGRESS;
     }
