@@ -3,7 +3,22 @@ import { Navigation } from '../components/Navigation';
 import { EarthScene, computeOrbitPoints } from '../components/EarthScene';
 import { ORBITS, ORBIT_ORDER } from '../data/orbits';
 import { useProgress } from '../hooks/useProgress';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Eye, EyeOff, Satellite } from 'lucide-react';
+
+// GPS constellation: 6 planes x 4 sats, 55° inc, ~20,200 km
+const GPS_CONSTELLATION = [];
+for (let plane = 0; plane < 6; plane++) {
+  for (let sat = 0; sat < 4; sat++) {
+    GPS_CONSTELLATION.push({
+      semiMajor: 4.8,
+      eccentricity: 0.01,
+      inclination: 55,
+      raan: plane * 60,
+      color: '#00FF94',
+      phase: (sat / 4) + (plane * 0.05),
+    });
+  }
+}
 
 const PARAM_DEFAULTS = {
   semiMajor: 3.0,
