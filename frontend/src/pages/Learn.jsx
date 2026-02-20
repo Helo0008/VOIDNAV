@@ -133,6 +133,15 @@ export default function Learn() {
                 </div>
               </div>
             </div>
+            {/* Labels toggle */}
+            <button
+              onClick={() => setShowLabels(v => !v)}
+              data-testid="learn-toggle-labels"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
+              style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 10, background: showLabels ? 'rgba(0,240,255,0.15)' : 'rgba(0,0,0,0.5)', border: `1px solid ${showLabels ? 'rgba(0,240,255,0.4)' : 'rgba(255,255,255,0.15)'}`, cursor: 'pointer', backdropFilter: 'blur(8px)', transition: 'all 0.2s' }}
+            >
+              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: showLabels ? '#00F0FF' : 'rgba(255,255,255,0.5)', letterSpacing: '0.1em' }}>LABELS</span>
+            </button>
           </div>
 
           {/* Lesson Content */}
