@@ -58,6 +58,8 @@ export default function Explore() {
   const { isOrbitUnlocked } = useProgress();
   const [params, setParams] = useState(PARAM_DEFAULTS);
   const [selectedPresetId, setSelectedPresetId] = useState(null);
+  const [showLabels, setShowLabels] = useState(false);
+  const [showGPS, setShowGPS] = useState(false);
 
   const customOrbit = useMemo(() => ({
     id: 'custom',
