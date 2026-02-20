@@ -221,12 +221,27 @@ export default function Explore() {
             </div>
           </div>
 
-          {/* Sliders */}
+          {/* Core Parameters */}
           <SliderParam label="Semi-Major Axis" value={params.semiMajor} min={2.2} max={10} step={0.1} unit=" u" onChange={v => setParams(p => ({ ...p, semiMajor: v }))} color={params.color} />
           <SliderParam label="Eccentricity" value={params.eccentricity} min={0} max={0.92} step={0.01} unit="" onChange={v => setParams(p => ({ ...p, eccentricity: v }))} color={params.color} />
           <SliderParam label="Inclination" value={params.inclination} min={0} max={180} step={0.5} unit="°" onChange={v => setParams(p => ({ ...p, inclination: v }))} color={params.color} />
-          <SliderParam label="RAAN" value={params.raan} min={0} max={360} step={1} unit="°" onChange={v => setParams(p => ({ ...p, raan: v }))} color={params.color} />
-          <SliderParam label="Speed" value={params.speed} min={0.01} max={0.4} step={0.01} unit="x" onChange={v => setParams(p => ({ ...p, speed: v }))} color={params.color} />
+
+          {/* Advanced toggle */}
+          <button
+            onClick={() => setShowAdvanced(v => !v)}
+            data-testid="toggle-advanced"
+            className="flex items-center gap-2 w-full mb-4 mt-1"
+            style={{ cursor: 'pointer', background: 'none', border: 'none', padding: '4px 0', color: 'rgba(255,255,255,0.35)', fontFamily: 'JetBrains Mono', fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase' }}
+          >
+            <ChevronDown size={12} style={{ transform: showAdvanced ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
+            {showAdvanced ? 'HIDE' : 'SHOW'} ADVANCED TELEMETRY
+          </button>
+          {showAdvanced && (
+            <>
+              <SliderParam label="RAAN" value={params.raan} min={0} max={360} step={1} unit="°" onChange={v => setParams(p => ({ ...p, raan: v }))} color={params.color} />
+              <SliderParam label="Speed" value={params.speed} min={0.01} max={0.4} step={0.01} unit="x" onChange={v => setParams(p => ({ ...p, speed: v }))} color={params.color} />
+            </>
+          )}
 
           {/* Scene Toggles */}
           <div className="mb-5">
