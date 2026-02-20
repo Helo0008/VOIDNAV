@@ -138,11 +138,11 @@ export default function Explore() {
         {/* 3D Scene */}
         <div style={{ flex: 1, position: 'relative' }}>
           <EarthScene
-            activeOrbits={[customOrbit]}
-            selectedOrbit={customOrbit}
+            activeOrbits={hohmannMode ? hohmannOrbits : [customOrbit, ...overlayOrbits]}
+            selectedOrbit={hohmannMode ? null : customOrbit}
             height="100%"
             interactive={true}
-            showLabels={showLabels}
+            showLabels={showLabels || hohmannMode}
             constellationOrbits={showGPS ? GPS_CONSTELLATION : null}
           />
           <div style={{ position: 'absolute', top: '16px', left: '16px', fontFamily: 'JetBrains Mono', fontSize: '11px', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em' }}>
