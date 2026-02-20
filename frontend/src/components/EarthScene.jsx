@@ -109,6 +109,25 @@ function createLabelSprite(text, color) {
   return sprite;
 }
 
+// Create a radial glow sprite for satellites
+function createGlowSprite(color) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 64; canvas.height = 64;
+  const ctx = canvas.getContext('2d');
+  const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gradient.addColorStop(0, color);
+  gradient.addColorStop(0.25, color + '80');
+  gradient.addColorStop(0.6, color + '20');
+  gradient.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 64, 64);
+  const tex = new THREE.CanvasTexture(canvas);
+  const glowMat = new THREE.SpriteMaterial({ map: tex, transparent: true, opacity: 0.55, depthWrite: false });
+  const sprite = new THREE.Sprite(glowMat);
+  sprite.scale.set(0.55, 0.55, 1);
+  return sprite;
+}
+
 function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, cameraTargetRef, constellationOrbits }) {
   const { scene, camera } = useThree();
   const earthRef = useRef(null);

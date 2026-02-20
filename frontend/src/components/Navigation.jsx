@@ -6,6 +6,7 @@ import { useProgress } from '../hooks/useProgress';
 const navLinks = [
   { to: '/learn', label: 'Learn', icon: BookOpen },
   { to: '/explore', label: 'Explore', icon: Globe },
+  { to: '/sandbox', label: 'Sandbox', icon: Rocket },
   { to: '/quiz', label: 'Quiz', icon: Brain },
   { to: '/dashboard', label: 'Mission Log', icon: BarChart3 },
 ];
