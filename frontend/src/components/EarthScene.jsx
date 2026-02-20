@@ -289,12 +289,18 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
   const constellationRef = useRef([]);
   useEffect(() => {
     // Clear previous
-    constellationRef.current.forEach(o => { scene.remove(o); o.geometry.dispose(); o.material.dispose(); });
+    constellationRef.current.forEach(o => { 
+      scene.remove(o); 
+      if (o.geometry) o.geometry.dispose(); 
+      if (o.material) o.material.dispose(); 
+    });
     constellationRef.current = [];
     if (!constellationOrbits?.length) return;
 
     constellationOrbits.forEach(co => {
       const pts = computeOrbitPoints(co.semiMajor, co.eccentricity, co.inclination, co.raan, 100);
+      if (!pts || pts.length === 0) return;
+      
       const geo = new THREE.BufferGeometry().setFromPoints(pts);
       const mat = new THREE.LineBasicMaterial({ color: co.color, transparent: true, opacity: 0.22 });
       const line = new THREE.Line(geo, mat);
@@ -304,13 +310,20 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
       const satGeo = new THREE.SphereGeometry(0.04, 6, 6);
       const satMat = new THREE.MeshBasicMaterial({ color: co.color });
       const sat = new THREE.Mesh(satGeo, satMat);
-      sat.position.copy(pts[Math.floor(co.phase * pts.length)]);
+      // Ensure phase is clamped to valid range [0, 1) and index is within bounds
+      const phase = Math.max(0, Math.min(co.phase || 0, 0.999));
+      const satIdx = Math.min(Math.floor(phase * pts.length), pts.length - 1);
+      sat.position.copy(pts[satIdx]);
       scene.add(sat);
       constellationRef.current.push(sat);
     });
 
     return () => {
-      constellationRef.current.forEach(o => { scene.remove(o); o.geometry?.dispose(); o.material?.dispose(); });
+      constellationRef.current.forEach(o => { 
+        scene.remove(o); 
+        if (o.geometry) o.geometry.dispose(); 
+        if (o.material) o.material.dispose(); 
+      });
       constellationRef.current = [];
     };
   }, [scene, constellationOrbits]);
