@@ -55,6 +55,10 @@ Build an interactive website that helps teach different types of space orbits us
 - **Sandbox Page:** Routed and accessible - 4-step mission builder that recommends optimal orbit type
 - **Navigation:** All 5 sections accessible (Learn, Explore, Sandbox, Quiz, Mission Log)
 
+### Bug Fixes (Feb 2026)
+- **CRITICAL: Explore orbit parameter updates** — Sliders and presets now properly update the 3D orbit in real-time. Root cause: EarthScene sync only compared orbit IDs, not parameters. Fix: in-place geometry/material updates when parameters change for same-ID orbits.
+- **All orbits unlocked** — All 11 orbit types accessible without XP gates for testing (thresholds set to 0, default progress includes all). localStorage merge ensures existing users get unlocked too.
+
 ## Upcoming Tasks (P1)
 - Camera lock/follow mode for specific orbits
 - Orbit comparison mode (side-by-side)
