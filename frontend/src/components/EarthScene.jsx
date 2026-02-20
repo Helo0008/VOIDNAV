@@ -630,6 +630,8 @@ export function EarthScene({
   cameraPosition = [0, 4, 12],
   showLabels = false,
   constellationOrbits = null,
+  transferAnimation = null,
+  showForceVectors = false,
 }) {
   const cameraTargetRef = useRef(new THREE.Vector3(...cameraPosition));
 
@@ -658,6 +660,8 @@ export function EarthScene({
           showLabels={showLabels}
           cameraTargetRef={cameraTargetRef}
           constellationOrbits={constellationOrbits}
+          transferAnimation={transferAnimation}
+          showForceVectors={showForceVectors}
         />
       </Canvas>
     </div>
