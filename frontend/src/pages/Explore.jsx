@@ -1,9 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Navigation } from '../components/Navigation';
 import { EarthScene, computeOrbitPoints } from '../components/EarthScene';
 import { ORBITS, ORBIT_ORDER } from '../data/orbits';
 import { useProgress } from '../hooks/useProgress';
-import { RotateCcw, Eye, EyeOff, Satellite, ArrowRightLeft } from 'lucide-react';
+import { RotateCcw, Eye, EyeOff, Satellite, ArrowRightLeft, ChevronDown } from 'lucide-react';
 
 // GPS constellation: 6 planes x 4 sats, 55° inc, ~20,200 km
 const GPS_CONSTELLATION = [];
