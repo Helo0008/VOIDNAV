@@ -598,6 +598,19 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
       // Update glow position
       if (e.glow) e.glow.position.copy(newPos);
 
+      // Update force vectors for selected orbit
+      if (showForceVectors && forceVecRef.current.gravity && selectedOrbit?.id === e.orbit.id) {
+        const gravDir = newPos.clone().negate().normalize();
+        const velDir = new THREE.Vector3().subVectors(e.points[nextIdx], e.points[idx]).normalize();
+        forceVecRef.current.gravity.position.copy(newPos);
+        forceVecRef.current.gravity.setDirection(gravDir);
+        forceVecRef.current.gravity.setLength(0.8, 0.12, 0.06);
+        forceVecRef.current.velocity.position.copy(newPos);
+        forceVecRef.current.velocity.setDirection(velDir);
+        const speedScale = Math.min(2.5, (1 / Math.max(0.5, newPos.length())) * 4);
+        forceVecRef.current.velocity.setLength(speedScale, 0.12, 0.06);
+      }
+
       // Update label position (above satellite)
       if (e.label.visible) {
         e.label.position.copy(newPos);
