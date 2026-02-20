@@ -397,6 +397,69 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
     };
   }, [scene, constellationOrbits]);
 
+  // ─── Hohmann Transfer Animation ──────────────────────────────────────────
+  const transferAnimRef = useRef(null);
+  useEffect(() => {
+    if (transferAnimRef.current) {
+      const tr = transferAnimRef.current;
+      [tr.sat, tr.glow, tr.burnSprite].forEach(o => disposeObj(o, scene));
+      transferAnimRef.current = null;
+    }
+    if (!transferAnimation) return;
+    const { startOrbit, transferOrbit, endOrbit } = transferAnimation;
+    const paths = [startOrbit, transferOrbit, endOrbit].map(o => {
+      const points = computeOrbitPoints(o.semiMajor, o.eccentricity, o.inclination, o.raan, 300);
+      return { ...o, points, times: buildTimeArray(points) };
+    });
+    const sat = createSatelliteGroup('#FFFFFF');
+    sat.scale.setScalar(1.5);
+    scene.add(sat);
+    const glow = createGlowSprite('#FFFFFF');
+    glow.scale.set(0.7, 0.7, 1);
+    scene.add(glow);
+    // Burn exhaust
+    const bc = document.createElement('canvas');
+    bc.width = 64; bc.height = 64;
+    const bx = bc.getContext('2d');
+    const bg = bx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    bg.addColorStop(0, '#FFCC00');
+    bg.addColorStop(0.3, '#FF660080');
+    bg.addColorStop(1, 'rgba(0,0,0,0)');
+    bx.fillStyle = bg;
+    bx.fillRect(0, 0, 64, 64);
+    const burnMat = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(bc), transparent: true, opacity: 0, depthWrite: false });
+    const burnSprite = new THREE.Sprite(burnMat);
+    burnSprite.scale.set(0.8, 0.8, 1);
+    scene.add(burnSprite);
+    transferAnimRef.current = { sat, glow, burnSprite, paths, phase: 0, t: 0.25, phaseTime: 0, _reported: -1 };
+    return () => {
+      if (transferAnimRef.current) {
+        [transferAnimRef.current.sat, transferAnimRef.current.glow, transferAnimRef.current.burnSprite].forEach(o => disposeObj(o, scene));
+        transferAnimRef.current = null;
+      }
+    };
+  }, [scene, transferAnimation]);
+
+  // ─── Force Vector Arrows ─────────────────────────────────────────────────
+  const forceVecRef = useRef({ gravity: null, velocity: null });
+  useEffect(() => {
+    const fv = forceVecRef.current;
+    if (fv.gravity) { scene.remove(fv.gravity); }
+    if (fv.velocity) { scene.remove(fv.velocity); }
+    forceVecRef.current = { gravity: null, velocity: null };
+    if (!showForceVectors) return;
+    const gravArrow = new THREE.ArrowHelper(new THREE.Vector3(0, -1, 0), new THREE.Vector3(), 1.0, 0xFF4444, 0.15, 0.08);
+    const velArrow = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(), 1.5, 0x44AAFF, 0.15, 0.08);
+    scene.add(gravArrow);
+    scene.add(velArrow);
+    forceVecRef.current = { gravity: gravArrow, velocity: velArrow };
+    return () => {
+      scene.remove(forceVecRef.current.gravity);
+      scene.remove(forceVecRef.current.velocity);
+      forceVecRef.current = { gravity: null, velocity: null };
+    };
+  }, [scene, showForceVectors]);
+
   // ─── Animation loop ────────────────────────────────────────────────────────
   const pulseRef = useRef(0);
   useFrame((_, delta) => {
