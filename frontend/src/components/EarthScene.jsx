@@ -343,6 +343,10 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
       if (selectedOrbit?.id === e.orbit.id) {
         const pScale = 1.3 + Math.sin(pulseRef.current * 3) * 0.2;
         e.sat.scale.setScalar(pScale);
+        if (e.glow) {
+          e.glow.scale.setScalar(0.8 + Math.sin(pulseRef.current * 2) * 0.15);
+          e.glow.material.opacity = 0.6 + Math.sin(pulseRef.current * 2.5) * 0.15;
+        }
       }
 
       // Update trail circular buffer
