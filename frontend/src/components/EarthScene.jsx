@@ -241,9 +241,7 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
     Object.keys(orbitMapRef.current).forEach(id => {
       if (!targetIds.has(id)) {
         const e = orbitMapRef.current[id];
-        [e.line, e.sat, e.trailLine, e.label, e.glow].forEach(o => {
-          if (o) { scene.remove(o); if (o.geometry) o.geometry.dispose(); if (o.material) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); } }
-        });
+        [e.line, e.sat, e.trailLine, e.label, e.glow].forEach(o => disposeObj(o, scene));
         if (e.trailMat) e.trailMat.dispose();
         delete orbitMapRef.current[id];
       }
@@ -316,11 +314,10 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
       trailLine.frustumCulled = false;
       scene.add(trailLine);
 
-      // Satellite
-      const satGeo = new THREE.SphereGeometry(0.065, 10, 10);
-      const satMat = new THREE.MeshBasicMaterial({ color: orbit.color });
-      const sat = new THREE.Mesh(satGeo, satMat);
+      // Satellite (3D model with body + solar panels)
+      const sat = createSatelliteGroup(orbit.color);
       scene.add(sat);
+      const satMat = sat.userData.panelMat;
 
       // Satellite glow
       const glow = createGlowSprite(orbit.color);
