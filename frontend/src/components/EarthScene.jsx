@@ -137,6 +137,34 @@ function createGlowSprite(color) {
   return sprite;
 }
 
+// Create a satellite 3D model (body + solar panels)
+function createSatelliteGroup(color) {
+  const group = new THREE.Group();
+  const bodyGeo = new THREE.BoxGeometry(0.04, 0.04, 0.08);
+  const bodyMat = new THREE.MeshBasicMaterial({ color: 0xcccccc });
+  group.add(new THREE.Mesh(bodyGeo, bodyMat));
+  const panelGeo = new THREE.BoxGeometry(0.2, 0.005, 0.05);
+  const panelMat = new THREE.MeshBasicMaterial({ color });
+  group.add(new THREE.Mesh(panelGeo, panelMat));
+  group.userData.panelMat = panelMat;
+  return group;
+}
+
+// Dispose an object (handles Groups and regular meshes)
+function disposeObj(o, scn) {
+  if (!o) return;
+  scn.remove(o);
+  if (o.isGroup) {
+    o.traverse(ch => {
+      if (ch.geometry) ch.geometry.dispose();
+      if (ch.material) { if (ch.material.map) ch.material.map.dispose(); ch.material.dispose(); }
+    });
+  } else {
+    if (o.geometry) o.geometry.dispose();
+    if (o.material) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); }
+  }
+}
+
 function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, cameraTargetRef, constellationOrbits }) {
   const { scene, camera } = useThree();
   const earthRef = useRef(null);
