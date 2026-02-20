@@ -165,7 +165,7 @@ function disposeObj(o, scn) {
   }
 }
 
-function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, cameraTargetRef, constellationOrbits }) {
+function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, cameraTargetRef, constellationOrbits, transferAnimation, showForceVectors }) {
   const { scene, camera } = useThree();
   const earthRef = useRef(null);
 
