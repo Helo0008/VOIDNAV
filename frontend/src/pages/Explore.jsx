@@ -217,8 +217,45 @@ export default function Explore() {
                 <Satellite size={13} color={showGPS ? '#00FF94' : 'rgba(255,255,255,0.3)'} />
                 <span style={{ fontFamily: 'Rajdhani', fontSize: '13px', fontWeight: 600, color: showGPS ? '#00FF94' : 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>GPS Constellation</span>
               </button>
+              <button
+                onClick={() => { setHohmannMode(v => !v); if (!hohmannMode) setOverlayIds([]); }}
+                data-testid="toggle-hohmann"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg w-full"
+                style={{ background: hohmannMode ? 'rgba(232,121,249,0.1)' : 'rgba(255,255,255,0.03)', border: `1px solid ${hohmannMode ? 'rgba(232,121,249,0.3)' : 'rgba(255,255,255,0.08)'}`, cursor: 'pointer', transition: 'all 0.2s' }}
+              >
+                <ArrowRightLeft size={13} color={hohmannMode ? '#E879F9' : 'rgba(255,255,255,0.3)'} />
+                <span style={{ fontFamily: 'Rajdhani', fontSize: '13px', fontWeight: 600, color: hohmannMode ? '#E879F9' : 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Hohmann Transfer</span>
+              </button>
             </div>
           </div>
+
+          {/* Compare Orbits */}
+          {!hohmannMode && (
+            <div className="mb-5">
+              <p style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '8px' }}>COMPARE ORBITS</p>
+              <div className="flex flex-wrap gap-1.5">
+                {ORBIT_ORDER.map(id => {
+                  const o = ORBITS[id];
+                  const active = overlayIds.includes(id);
+                  return (
+                    <button
+                      key={id}
+                      onClick={() => toggleOverlay(id)}
+                      data-testid={`overlay-${id}`}
+                      style={{
+                        padding: '2px 8px', borderRadius: '9999px', fontFamily: 'Rajdhani', fontWeight: 600, fontSize: '11px',
+                        textTransform: 'uppercase', letterSpacing: '0.04em', cursor: 'pointer', transition: 'all 0.2s',
+                        color: active ? '#000' : o.color, background: active ? o.color : `${o.color}12`,
+                        border: `1px solid ${o.color}${active ? '' : '40'}`,
+                      }}
+                    >
+                      {o.shortName}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Computed Data */}
           <div className="mt-2 mb-6">
