@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Rocket, BookOpen, Globe, Brain, BarChart3, Menu, X } from 'lucide-react';
+import { Rocket, BookOpen, Globe, Brain, BarChart3, Menu, X, Target } from 'lucide-react';
 import { useState } from 'react';
 import { useProgress } from '../hooks/useProgress';
 
@@ -7,6 +7,7 @@ const navLinks = [
   { to: '/learn', label: 'Learn', icon: BookOpen },
   { to: '/explore', label: 'Explore', icon: Globe },
   { to: '/sandbox', label: 'Sandbox', icon: Rocket },
+  { to: '/challenge', label: 'Challenge', icon: Target },
   { to: '/quiz', label: 'Quiz', icon: Brain },
   { to: '/dashboard', label: 'Mission Log', icon: BarChart3 },
 ];
