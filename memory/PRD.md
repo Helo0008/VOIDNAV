@@ -6,71 +6,55 @@ Build an interactive website that helps teach different types of space orbits us
 ## Tech Stack
 - **Frontend:** React, TailwindCSS, react-three-fiber (3D), three.js, drei, Shadcn UI
 - **Backend:** FastAPI (Python)
-- **Database:** MongoDB (minimal usage - progress stored in localStorage)
+- **Database:** MongoDB (minimal - progress in localStorage)
 
-## Core Architecture
+## Architecture
 ```
-/app/
-├── backend/           # FastAPI backend (minimal)
-│   ├── server.py
-│   └── .env
-└── frontend/src/
-    ├── components/
-    │   ├── EarthScene.jsx    # Core 3D scene engine
-    │   ├── Navigation.jsx    # App navigation
-    │   └── ui/               # Shadcn components
-    ├── pages/
-    │   ├── Home.jsx          # Landing with 3D hero
-    │   ├── Learn.jsx         # Guided lessons
-    │   ├── Explore.jsx       # Free orbit builder + compare + Hohmann
-    │   ├── Sandbox.jsx       # Mission-based orbit recommender
-    │   ├── Quiz.jsx          # Gamified quizzes
-    │   └── Dashboard.jsx     # Progress tracking
-    ├── data/
-    │   ├── orbits.js         # 11 orbit types with full data
-    │   └── quizData.js       # Quiz questions per orbit
-    └── hooks/
-        └── useProgress.js    # XP, unlocks, localStorage
+frontend/src/
+├── components/
+│   ├── EarthScene.jsx    # 3D scene: orbits, satellites, Hohmann animation, force vectors
+│   ├── Navigation.jsx    # 7 nav items: Learn, Explore, Sandbox, Challenge, Quiz, Mission Log
+│   └── ui/               # Shadcn components
+├── pages/
+│   ├── Home.jsx          # Landing with 3D hero
+│   ├── Learn.jsx         # Guided lessons + force vectors + free-fall explanation
+│   ├── Explore.jsx       # Orbit builder + compare + Hohmann + GPS + progressive UI
+│   ├── Sandbox.jsx       # Mission-based orbit recommender
+│   ├── CatchUpChallenge.jsx  # Orbital rendezvous puzzle (decelerate-to-catch-up)
+│   ├── Quiz.jsx          # Gamified quizzes per orbit type
+│   └── Dashboard.jsx     # Progress tracking
+├── data/orbits.js        # 11 orbit types + unlock thresholds
+└── hooks/useProgress.js  # XP, unlocks, localStorage
 ```
 
-## What's Been Implemented
+## Implemented Features
 
-### Phase 1 - Initial Build (DONE)
-- 3D interactive Earth scene with orbiting satellites
-- 11 orbit types: LEO, Polar, GEO, SSO, MEO, HEO, Molniya, Tundra, Graveyard, Hohmann, Lagrange
-- Guided lessons with step-by-step content for each orbit
-- Quiz system with XP rewards
-- Progress tracking with localStorage (XP, unlocks, achievements)
-- Dark space theme with HUD-style UI
+### Phase 1 — Core Build
+- 3D Earth scene, 11 orbit types, guided lessons, quiz system, XP + progress tracking
 
-### Phase 2 - Animation Enhancements (DONE - Feb 2026)
-- Gradient trails with vertex colors (fade from bright to dark)
-- Satellite glow sprites with pulsing effect
-- Kepler's 2nd Law variable speed
-- Smooth one-shot camera transitions with damping
-- GPS Constellation toggle (24 satellites, 6 planes)
-- Orbit Labels toggle
-- Speed control slider
-- Sandbox page routed and accessible
+### Phase 2 — Animation Polish
+- Gradient trails (vertex colors), satellite glow sprites, Kepler's 2nd law speed variation
+- Smooth one-shot camera transitions, GPS constellation toggle, orbit labels
 
-### Phase 3 - Camera Fix, Satellite Models & Advanced Features (DONE - Feb 2026)
-- **CRITICAL FIX: Camera no longer snaps back** — CameraControls rewritten with one-shot transitions, no continuous lerp
-- **CRITICAL FIX: Zoom extended to maxDistance=80** — Can now fully view HEO and larger orbits
-- **CRITICAL FIX: Explore sliders/presets** — In-place orbit parameter updates for same-ID orbits
-- **3D Satellite Models** — BoxGeometry body + solar panel wings, oriented along orbit tangent
-- **Multi-Orbit Comparison** — Toggle overlay orbits (LEO, GEO, HEO, etc.) alongside custom orbit
-- **Hohmann Transfer Visualization** — LEO → Transfer ellipse → GEO with labeled satellites
-- **All 11 orbits unlocked** — XP thresholds set to 0 for testing
+### Phase 3 — Camera + Satellite + Comparison
+- Camera no longer snaps back (one-shot transitions only, maxDistance=80)
+- 3D satellite models (body + solar panels, oriented along orbit tangent)
+- Multi-orbit comparison (overlay chips), static Hohmann display
+- All 11 orbits unlocked for testing
 
-## Upcoming Tasks (P1)
-- Camera follow/lock mode for specific satellites
-- Orbit transfer animations (animated burn indicators)
-- More satellite model variants
+### Phase 4 — Educational Fundamentals (Feb 2026)
+- **Animated Hohmann Transfer:** Satellite actually transfers LEO→burn→transfer coast→burn→GEO with delta-V indicators (+2.46 km/s, +1.47 km/s) and live phase timeline
+- **Orbital Catch-Up Puzzle:** Counter-intuitive rendezvous challenge — player must learn to decelerate to catch a target satellite (prograde raises orbit = slower, retrograde lowers = faster)
+- **Force Vectors + Free-Fall Explanation:** Toggle on Learn page shows gravity (red arrow) + velocity (blue arrow) with explanation: "The satellite IS falling — but it moves sideways fast enough that Earth's surface curves away"
+- **Progressive UI:** Explore shows only 3 core parameters (semi-major axis, eccentricity, inclination) with Advanced Telemetry toggle for RAAN/Speed
 
-## Future/Backlog (P2)
-- Re-enable XP unlock gates for production deployment
-- User authentication with backend
-- Dynamic quiz content from API
-- Leaderboard system
-- Sound effects and ambient space audio
-- Mobile touch gesture optimization
+## Upcoming (P1)
+- Kepler's 2nd law visual emphasis (area sweep visualization)
+- Orbit transfer path planning (user-selectable start/end orbits for Hohmann)
+- Progressive lesson unlocking tied to quiz mastery
+
+## Backlog (P2)
+- Re-enable XP unlock gates for production
+- User auth + backend persistence
+- Leaderboard, sound effects, mobile touch optimization
+- Argument of periapsis parameter in advanced mode
