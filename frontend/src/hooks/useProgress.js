@@ -3,7 +3,7 @@ import { ORBIT_UNLOCK_THRESHOLDS, ORBIT_ORDER } from '../data/orbits';
 
 const DEFAULT_PROGRESS = {
   totalPoints: 0,
-  unlockedOrbits: ['leo', 'polar', 'geo'],
+  unlockedOrbits: ['leo', 'polar', 'geo', 'sso', 'meo', 'heo', 'molniya', 'tundra', 'graveyard', 'hohmann', 'lagrange'],
   completedLessons: [],
   quizScores: {},
   achievements: [],

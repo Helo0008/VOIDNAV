@@ -5,14 +5,14 @@ export const ORBIT_UNLOCK_THRESHOLDS = {
   leo: 0,
   polar: 0,
   geo: 0,
-  sso: 100,
-  meo: 100,
-  heo: 250,
-  molniya: 250,
-  tundra: 450,
-  graveyard: 450,
-  hohmann: 700,
-  lagrange: 1000,
+  sso: 0,
+  meo: 0,
+  heo: 0,
+  molniya: 0,
+  tundra: 0,
+  graveyard: 0,
+  hohmann: 0,
+  lagrange: 0,
 };
 
 export const ORBITS = {

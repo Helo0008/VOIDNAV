@@ -212,9 +212,50 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
       }
     });
 
-    // Add new
+    // Add or update orbits
     activeOrbits.filter(Boolean).forEach(orbit => {
-      if (orbitMapRef.current[orbit.id]) return;
+      const existing = orbitMapRef.current[orbit.id];
+      if (existing) {
+        // Detect parameter changes — update in-place for smooth transitions
+        const o = existing.orbit;
+        const geomChanged = o.semiMajor !== orbit.semiMajor || o.eccentricity !== orbit.eccentricity ||
+                            o.inclination !== orbit.inclination || o.raan !== orbit.raan;
+        const colorChanged = o.color !== orbit.color;
+        if (!geomChanged && !colorChanged && o.speed === orbit.speed && o.shortName === orbit.shortName) return;
+
+        existing.orbit = orbit;
+
+        if (geomChanged) {
+          const newPoints = computeOrbitPoints(orbit.semiMajor, orbit.eccentricity, orbit.inclination, orbit.raan, 300);
+          existing.points = newPoints;
+          existing.times = buildTimeArray(newPoints);
+          existing.line.geometry.dispose();
+          existing.line.geometry = new THREE.BufferGeometry().setFromPoints(newPoints);
+          existing.trailHead = 0;
+          existing.trailCount = 0;
+          existing.trailGeo.setDrawRange(0, 0);
+        }
+
+        if (colorChanged) {
+          existing.lineMat.color.setStyle(orbit.color);
+          existing.satMat.color.setStyle(orbit.color);
+          existing.trailColor.setStyle(orbit.color);
+          if (existing.glow) {
+            scene.remove(existing.glow);
+            if (existing.glow.material.map) existing.glow.material.map.dispose();
+            existing.glow.material.dispose();
+          }
+          existing.glow = createGlowSprite(orbit.color);
+          scene.add(existing.glow);
+          scene.remove(existing.label);
+          if (existing.label.material.map) existing.label.material.map.dispose();
+          existing.label.material.dispose();
+          existing.label = createLabelSprite(orbit.shortName, orbit.color);
+          existing.label.visible = showLabels;
+          scene.add(existing.label);
+        }
+        return;
+      }
 
       const points = computeOrbitPoints(orbit.semiMajor, orbit.eccentricity, orbit.inclination, orbit.raan, 300);
       const times = buildTimeArray(points);
