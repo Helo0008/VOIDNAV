@@ -108,6 +108,7 @@ export default function Learn() {
               selectedOrbit={orbit}
               height="100%"
               showLabels={showLabels}
+              showForceVectors={showForces}
               cameraPosition={[0, 3, orbit?.semiMajor ? orbit.semiMajor * 2.2 : 10]}
             />
             {/* Orbit info overlay */}
