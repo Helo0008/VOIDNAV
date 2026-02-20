@@ -468,6 +468,78 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
     // Rotate Earth
     if (earthRef.current) earthRef.current.rotation.y += delta * 0.025;
 
+    // ── Hohmann transfer animation
+    if (transferAnimRef.current) {
+      const tr = transferAnimRef.current;
+      tr.phaseTime += delta;
+      const getPos = (pi, t) => {
+        const p = tr.paths[pi];
+        const idx = findIdx(p.times, t);
+        const ni = Math.min(idx + 1, p.points.length - 1);
+        const f = idx < p.times.length - 1 ? (t - p.times[idx]) / Math.max(p.times[ni] - p.times[idx], 1e-6) : 0;
+        return new THREE.Vector3().lerpVectors(p.points[idx], p.points[ni], f);
+      };
+      let pos = null;
+      switch (tr.phase) {
+        case 0: { // LEO orbit
+          const spd = (tr.paths[0].speed || 0.15) * 0.18;
+          tr.t = (tr.t + spd * delta) % 1;
+          pos = getPos(0, tr.t);
+          tr.burnSprite.material.opacity = Math.max(0, tr.burnSprite.material.opacity - delta * 3);
+          if (tr.phaseTime > 4) { tr.phase = 1; tr.phaseTime = 0; }
+          break;
+        }
+        case 1: { // Prograde burn at perigee
+          pos = getPos(0, tr.t);
+          tr.burnSprite.material.opacity = 0.8 + Math.sin(tr.phaseTime * 12) * 0.2;
+          tr.burnSprite.scale.setScalar(0.5 + Math.sin(tr.phaseTime * 8) * 0.2);
+          if (tr.phaseTime > 2) { tr.phase = 2; tr.phaseTime = 0; tr.t = 0; }
+          break;
+        }
+        case 2: { // Transfer coast (perigee→apogee, t:0→0.5)
+          const spd = (tr.paths[1].speed || 0.04) * 0.18;
+          tr.t = Math.min(tr.t + spd * delta, 0.5);
+          pos = getPos(1, tr.t);
+          tr.burnSprite.material.opacity = Math.max(0, tr.burnSprite.material.opacity - delta * 2);
+          if (tr.t >= 0.499) { tr.phase = 3; tr.phaseTime = 0; }
+          break;
+        }
+        case 3: { // Circularization burn at apogee
+          pos = getPos(1, 0.5);
+          tr.burnSprite.material.opacity = 0.8 + Math.sin(tr.phaseTime * 12) * 0.2;
+          tr.burnSprite.scale.setScalar(0.5 + Math.sin(tr.phaseTime * 8) * 0.2);
+          if (tr.phaseTime > 2) {
+            const ap = getPos(1, 0.5);
+            let bestT = 0, bestD = Infinity;
+            tr.paths[2].points.forEach((pt, i) => {
+              const d = pt.distanceTo(ap);
+              if (d < bestD) { bestD = d; bestT = i / tr.paths[2].points.length; }
+            });
+            tr.t = bestT; tr.phase = 4; tr.phaseTime = 0;
+          }
+          break;
+        }
+        case 4: { // GEO orbit
+          const spd = (tr.paths[2].speed || 0.04) * 0.18;
+          tr.t = (tr.t + spd * delta) % 1;
+          pos = getPos(2, tr.t);
+          tr.burnSprite.material.opacity = Math.max(0, tr.burnSprite.material.opacity - delta * 2);
+          if (tr.phaseTime > 6) { tr.phase = 0; tr.phaseTime = 0; tr.t = 0.25; }
+          break;
+        }
+        default: break;
+      }
+      if (pos) {
+        tr.sat.position.copy(pos);
+        tr.glow.position.copy(pos);
+        tr.burnSprite.position.copy(pos);
+      }
+      if (tr.phase !== tr._reported) {
+        tr._reported = tr.phase;
+        if (transferAnimation?.onPhaseChange) transferAnimation.onPhaseChange(tr.phase);
+      }
+    }
+
     // Animate each orbit's satellite with smooth lerp + Keplerian speed
     Object.values(orbitMapRef.current).forEach(e => {
       const spd = (e.orbit.speed || 0.1) * 0.18;
