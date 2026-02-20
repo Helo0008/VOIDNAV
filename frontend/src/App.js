@@ -7,6 +7,7 @@ import Explore from './pages/Explore';
 import Quiz from './pages/Quiz';
 import Dashboard from './pages/Dashboard';
 import Sandbox from './pages/Sandbox';
+import CatchUpChallenge from './pages/CatchUpChallenge';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/quiz" element={<Quiz />} />
           <Route path="/quiz/:orbitId" element={<Quiz />} />
           <Route path="/sandbox" element={<Sandbox />} />
+          <Route path="/challenge" element={<CatchUpChallenge />} />
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
