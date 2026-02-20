@@ -62,11 +62,14 @@ export default function Explore() {
   const [showGPS, setShowGPS] = useState(false);
   const [overlayIds, setOverlayIds] = useState([]);
   const [hohmannMode, setHohmannMode] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [hohmannPhase, setHohmannPhase] = useState(0);
 
   const toggleOverlay = (id) => setOverlayIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   const overlayOrbits = useMemo(() => overlayIds.map(id => ORBITS[id]).filter(Boolean), [overlayIds]);
+  const handlePhaseChange = useCallback((p) => setHohmannPhase(p), []);
 
-  // Hohmann transfer: LEO → GEO
+  // Hohmann transfer: LEO → GEO (animated)
   const hohmannOrbits = useMemo(() => {
     if (!hohmannMode) return [];
     const r1 = 2.45, r2 = 7.8;
@@ -74,10 +77,22 @@ export default function Explore() {
     const transferEcc = (r2 - r1) / (r2 + r1);
     return [
       { ...ORBITS.leo, id: 'h-start', shortName: 'LEO', color: '#00FF94', speed: 0.15 },
-      { id: 'h-transfer', name: 'Transfer Orbit', shortName: 'TRANSFER', color: '#E879F9', semiMajor: transferSMA, eccentricity: transferEcc, inclination: 0.5, raan: 0, speed: 0.06 },
+      { id: 'h-transfer', name: 'Transfer Orbit', shortName: 'TRANSFER', color: '#E879F9', semiMajor: transferSMA, eccentricity: transferEcc, inclination: 0.5, raan: 0, speed: 0.04 },
       { ...ORBITS.geo, id: 'h-end', shortName: 'GEO', color: '#FFD700', speed: 0.04 },
     ];
   }, [hohmannMode]);
+
+  // Animated transfer config
+  const transferAnimConfig = useMemo(() => {
+    if (!hohmannMode) return null;
+    const r1 = 2.45, r2 = 7.8;
+    return {
+      startOrbit: { semiMajor: r1, eccentricity: 0.001, inclination: 0.5, raan: 0, speed: 0.15 },
+      transferOrbit: { semiMajor: (r1 + r2) / 2, eccentricity: (r2 - r1) / (r2 + r1), inclination: 0.5, raan: 0, speed: 0.04 },
+      endOrbit: { semiMajor: r2, eccentricity: 0.0, inclination: 0.5, raan: 0, speed: 0.04 },
+      onPhaseChange: handlePhaseChange,
+    };
+  }, [hohmannMode, handlePhaseChange]);
 
   const customOrbit = useMemo(() => ({
     id: 'custom',
