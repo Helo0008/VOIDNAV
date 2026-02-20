@@ -365,6 +365,9 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
         e.trailGeo.setDrawRange(0, e.trailCount);
       }
 
+      // Update glow position
+      if (e.glow) e.glow.position.copy(newPos);
+
       // Update label position (above satellite)
       if (e.label.visible) {
         e.label.position.copy(newPos);
