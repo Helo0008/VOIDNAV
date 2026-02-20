@@ -159,7 +159,25 @@ export default function Explore() {
             interactive={true}
             showLabels={showLabels || hohmannMode}
             constellationOrbits={showGPS ? GPS_CONSTELLATION : null}
+            transferAnimation={transferAnimConfig}
           />
+          {/* Hohmann Phase Indicator */}
+          {hohmannMode && (
+            <div data-testid="hohmann-phase-indicator" style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', zIndex: 10, display: 'flex', gap: '4px', alignItems: 'center', padding: '8px 14px', background: 'rgba(0,0,0,0.75)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', backdropFilter: 'blur(8px)' }}>
+              {['LEO ORBIT', 'BURN +2.46 km/s', 'TRANSFER COAST', 'BURN +1.47 km/s', 'GEO ORBIT'].map((label, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  {i > 0 && <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '10px' }}>{'>'}</span>}
+                  <span style={{
+                    fontFamily: 'JetBrains Mono', fontSize: '10px', letterSpacing: '0.06em', padding: '2px 6px', borderRadius: '4px',
+                    color: hohmannPhase === i ? (i === 1 || i === 3 ? '#FFCC00' : '#00F0FF') : 'rgba(255,255,255,0.3)',
+                    background: hohmannPhase === i ? (i === 1 || i === 3 ? 'rgba(255,200,0,0.15)' : 'rgba(0,240,255,0.1)') : 'transparent',
+                    border: hohmannPhase === i ? `1px solid ${i === 1 || i === 3 ? 'rgba(255,200,0,0.3)' : 'rgba(0,240,255,0.2)'}` : '1px solid transparent',
+                    transition: 'all 0.3s',
+                  }}>{label}</span>
+                </div>
+              ))}
+            </div>
+          )}
           <div style={{ position: 'absolute', top: '16px', left: '16px', fontFamily: 'JetBrains Mono', fontSize: '11px', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em' }}>
             DRAG TO ROTATE &bull; SCROLL TO ZOOM
           </div>
