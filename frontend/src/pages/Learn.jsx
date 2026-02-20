@@ -135,15 +135,38 @@ export default function Learn() {
                 </div>
               </div>
             </div>
-            {/* Labels toggle */}
-            <button
-              onClick={() => setShowLabels(v => !v)}
-              data-testid="learn-toggle-labels"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
-              style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 10, background: showLabels ? 'rgba(0,240,255,0.15)' : 'rgba(0,0,0,0.5)', border: `1px solid ${showLabels ? 'rgba(0,240,255,0.4)' : 'rgba(255,255,255,0.15)'}`, cursor: 'pointer', backdropFilter: 'blur(8px)', transition: 'all 0.2s' }}
-            >
-              <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: showLabels ? '#00F0FF' : 'rgba(255,255,255,0.5)', letterSpacing: '0.1em' }}>LABELS</span>
-            </button>
+            {/* Scene controls */}
+            <div style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 10, display: 'flex', gap: '6px' }}>
+              <button
+                onClick={() => setShowLabels(v => !v)}
+                data-testid="learn-toggle-labels"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
+                style={{ background: showLabels ? 'rgba(0,240,255,0.15)' : 'rgba(0,0,0,0.5)', border: `1px solid ${showLabels ? 'rgba(0,240,255,0.4)' : 'rgba(255,255,255,0.15)'}`, cursor: 'pointer', backdropFilter: 'blur(8px)', transition: 'all 0.2s' }}
+              >
+                <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: showLabels ? '#00F0FF' : 'rgba(255,255,255,0.5)', letterSpacing: '0.1em' }}>LABELS</span>
+              </button>
+              <button
+                onClick={() => setShowForces(v => !v)}
+                data-testid="learn-toggle-forces"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg"
+                style={{ background: showForces ? 'rgba(255,68,68,0.15)' : 'rgba(0,0,0,0.5)', border: `1px solid ${showForces ? 'rgba(255,68,68,0.4)' : 'rgba(255,255,255,0.15)'}`, cursor: 'pointer', backdropFilter: 'blur(8px)', transition: 'all 0.2s' }}
+              >
+                <span style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: showForces ? '#FF4444' : 'rgba(255,255,255,0.5)', letterSpacing: '0.1em' }}>FORCES</span>
+              </button>
+            </div>
+            {/* Gravity well explanation */}
+            {showForces && (
+              <div style={{ position: 'absolute', bottom: '16px', left: '16px', right: '16px', zIndex: 10 }}>
+                <div className="hud-panel" style={{ padding: '10px 14px', borderRadius: '8px' }}>
+                  <p style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: '#FF4444', letterSpacing: '0.12em', marginBottom: '4px' }}>WHY ORBIT = FREE-FALL</p>
+                  <p style={{ fontFamily: 'Rajdhani', fontSize: '13px', color: 'rgba(255,255,255,0.7)', lineHeight: 1.5 }}>
+                    <span style={{ color: '#FF4444', fontWeight: 700 }}>Red arrow</span> = gravity pulling toward Earth.{' '}
+                    <span style={{ color: '#44AAFF', fontWeight: 700 }}>Blue arrow</span> = velocity (sideways motion).
+                    The satellite IS falling — but it moves sideways fast enough that Earth's surface curves away beneath it. That's orbit.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Lesson Content */}
