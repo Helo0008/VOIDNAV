@@ -3,7 +3,7 @@ import { Navigation } from '../components/Navigation';
 import { EarthScene, computeOrbitPoints } from '../components/EarthScene';
 import { ORBITS, ORBIT_ORDER } from '../data/orbits';
 import { useProgress } from '../hooks/useProgress';
-import { RotateCcw, Eye, EyeOff, Satellite } from 'lucide-react';
+import { RotateCcw, Eye, EyeOff, Satellite, ArrowRightLeft } from 'lucide-react';
 
 // GPS constellation: 6 planes x 4 sats, 55° inc, ~20,200 km
 const GPS_CONSTELLATION = [];
@@ -60,6 +60,24 @@ export default function Explore() {
   const [selectedPresetId, setSelectedPresetId] = useState(null);
   const [showLabels, setShowLabels] = useState(false);
   const [showGPS, setShowGPS] = useState(false);
+  const [overlayIds, setOverlayIds] = useState([]);
+  const [hohmannMode, setHohmannMode] = useState(false);
+
+  const toggleOverlay = (id) => setOverlayIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  const overlayOrbits = useMemo(() => overlayIds.map(id => ORBITS[id]).filter(Boolean), [overlayIds]);
+
+  // Hohmann transfer: LEO → GEO
+  const hohmannOrbits = useMemo(() => {
+    if (!hohmannMode) return [];
+    const r1 = 2.45, r2 = 7.8;
+    const transferSMA = (r1 + r2) / 2;
+    const transferEcc = (r2 - r1) / (r2 + r1);
+    return [
+      { ...ORBITS.leo, id: 'h-start', shortName: 'LEO', color: '#00FF94', speed: 0.15 },
+      { id: 'h-transfer', name: 'Transfer Orbit', shortName: 'TRANSFER', color: '#E879F9', semiMajor: transferSMA, eccentricity: transferEcc, inclination: 0.5, raan: 0, speed: 0.06 },
+      { ...ORBITS.geo, id: 'h-end', shortName: 'GEO', color: '#FFD700', speed: 0.04 },
+    ];
+  }, [hohmannMode]);
 
   const customOrbit = useMemo(() => ({
     id: 'custom',
