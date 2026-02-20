@@ -124,6 +124,8 @@ export default function Explore() {
             selectedOrbit={customOrbit}
             height="100%"
             interactive={true}
+            showLabels={showLabels}
+            constellationOrbits={showGPS ? GPS_CONSTELLATION : null}
           />
           <div style={{ position: 'absolute', top: '16px', left: '16px', fontFamily: 'JetBrains Mono', fontSize: '11px', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em' }}>
             DRAG TO ROTATE &bull; SCROLL TO ZOOM
