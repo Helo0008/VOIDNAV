@@ -22,7 +22,7 @@ Build an interactive website that helps teach different types of space orbits us
     ├── pages/
     │   ├── Home.jsx          # Landing with 3D hero
     │   ├── Learn.jsx         # Guided lessons
-    │   ├── Explore.jsx       # Free orbit builder
+    │   ├── Explore.jsx       # Free orbit builder + compare + Hohmann
     │   ├── Sandbox.jsx       # Mission-based orbit recommender
     │   ├── Quiz.jsx          # Gamified quizzes
     │   └── Dashboard.jsx     # Progress tracking
@@ -42,33 +42,35 @@ Build an interactive website that helps teach different types of space orbits us
 - Quiz system with XP rewards
 - Progress tracking with localStorage (XP, unlocks, achievements)
 - Dark space theme with HUD-style UI
-- Mobile-responsive navigation
 
-### Phase 2 - Animation Enhancements & Features (DONE - Feb 2026)
-- **Gradient Trails:** Satellite trails fade from bright to dark using vertex colors
-- **Satellite Glow:** Radial glow sprites around each satellite with pulsing effect
-- **Kepler's 2nd Law:** Variable speed based on orbital position (faster at perigee)
-- **Smooth Camera:** Lerp-based camera transitions with damping
-- **GPS Constellation:** Toggle to show 24 GPS satellites across 6 orbital planes in Explore
-- **Orbit Labels:** Toggle to show/hide orbit name labels in 3D scene (Explore + Learn)
-- **Speed Control:** Adjustable animation speed slider in Explore
-- **Sandbox Page:** Routed and accessible - 4-step mission builder that recommends optimal orbit type
-- **Navigation:** All 5 sections accessible (Learn, Explore, Sandbox, Quiz, Mission Log)
+### Phase 2 - Animation Enhancements (DONE - Feb 2026)
+- Gradient trails with vertex colors (fade from bright to dark)
+- Satellite glow sprites with pulsing effect
+- Kepler's 2nd Law variable speed
+- Smooth one-shot camera transitions with damping
+- GPS Constellation toggle (24 satellites, 6 planes)
+- Orbit Labels toggle
+- Speed control slider
+- Sandbox page routed and accessible
 
-### Bug Fixes (Feb 2026)
-- **CRITICAL: Explore orbit parameter updates** — Sliders and presets now properly update the 3D orbit in real-time. Root cause: EarthScene sync only compared orbit IDs, not parameters. Fix: in-place geometry/material updates when parameters change for same-ID orbits.
-- **All orbits unlocked** — All 11 orbit types accessible without XP gates for testing (thresholds set to 0, default progress includes all). localStorage merge ensures existing users get unlocked too.
+### Phase 3 - Camera Fix, Satellite Models & Advanced Features (DONE - Feb 2026)
+- **CRITICAL FIX: Camera no longer snaps back** — CameraControls rewritten with one-shot transitions, no continuous lerp
+- **CRITICAL FIX: Zoom extended to maxDistance=80** — Can now fully view HEO and larger orbits
+- **CRITICAL FIX: Explore sliders/presets** — In-place orbit parameter updates for same-ID orbits
+- **3D Satellite Models** — BoxGeometry body + solar panel wings, oriented along orbit tangent
+- **Multi-Orbit Comparison** — Toggle overlay orbits (LEO, GEO, HEO, etc.) alongside custom orbit
+- **Hohmann Transfer Visualization** — LEO → Transfer ellipse → GEO with labeled satellites
+- **All 11 orbits unlocked** — XP thresholds set to 0 for testing
 
 ## Upcoming Tasks (P1)
-- Camera lock/follow mode for specific orbits
-- Orbit comparison mode (side-by-side)
-- More detailed satellite models (instead of spheres)
+- Camera follow/lock mode for specific satellites
+- Orbit transfer animations (animated burn indicators)
+- More satellite model variants
 
 ## Future/Backlog (P2)
+- Re-enable XP unlock gates for production deployment
 - User authentication with backend
 - Dynamic quiz content from API
 - Leaderboard system
-- Step-by-step guided lesson animations with orbit parameter changes
-- Orbit transfer visualizations (Hohmann transfer animation)
 - Sound effects and ambient space audio
-- Mobile touch gesture optimization for 3D scene
+- Mobile touch gesture optimization
