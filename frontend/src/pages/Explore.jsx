@@ -175,6 +175,32 @@ export default function Explore() {
           <SliderParam label="Eccentricity" value={params.eccentricity} min={0} max={0.92} step={0.01} unit="" onChange={v => setParams(p => ({ ...p, eccentricity: v }))} color={params.color} />
           <SliderParam label="Inclination" value={params.inclination} min={0} max={180} step={0.5} unit="°" onChange={v => setParams(p => ({ ...p, inclination: v }))} color={params.color} />
           <SliderParam label="RAAN" value={params.raan} min={0} max={360} step={1} unit="°" onChange={v => setParams(p => ({ ...p, raan: v }))} color={params.color} />
+          <SliderParam label="Speed" value={params.speed} min={0.01} max={0.4} step={0.01} unit="x" onChange={v => setParams(p => ({ ...p, speed: v }))} color={params.color} />
+
+          {/* Scene Toggles */}
+          <div className="mb-5">
+            <p style={{ fontFamily: 'JetBrains Mono', fontSize: '10px', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '8px' }}>SCENE OPTIONS</p>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => setShowLabels(v => !v)}
+                data-testid="toggle-labels"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg w-full"
+                style={{ background: showLabels ? 'rgba(0,240,255,0.1)' : 'rgba(255,255,255,0.03)', border: `1px solid ${showLabels ? 'rgba(0,240,255,0.3)' : 'rgba(255,255,255,0.08)'}`, cursor: 'pointer', transition: 'all 0.2s' }}
+              >
+                {showLabels ? <Eye size={13} color="#00F0FF" /> : <EyeOff size={13} color="rgba(255,255,255,0.3)" />}
+                <span style={{ fontFamily: 'Rajdhani', fontSize: '13px', fontWeight: 600, color: showLabels ? '#00F0FF' : 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Labels</span>
+              </button>
+              <button
+                onClick={() => setShowGPS(v => !v)}
+                data-testid="toggle-gps"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg w-full"
+                style={{ background: showGPS ? 'rgba(0,255,148,0.1)' : 'rgba(255,255,255,0.03)', border: `1px solid ${showGPS ? 'rgba(0,255,148,0.3)' : 'rgba(255,255,255,0.08)'}`, cursor: 'pointer', transition: 'all 0.2s' }}
+              >
+                <Satellite size={13} color={showGPS ? '#00FF94' : 'rgba(255,255,255,0.3)'} />
+                <span style={{ fontFamily: 'Rajdhani', fontSize: '13px', fontWeight: 600, color: showGPS ? '#00FF94' : 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>GPS Constellation</span>
+              </button>
+            </div>
+          </div>
 
           {/* Computed Data */}
           <div className="mt-2 mb-6">
