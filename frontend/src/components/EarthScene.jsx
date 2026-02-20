@@ -204,7 +204,7 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
     Object.keys(orbitMapRef.current).forEach(id => {
       if (!targetIds.has(id)) {
         const e = orbitMapRef.current[id];
-        [e.line, e.sat, e.trailLine, e.label].forEach(o => {
+        [e.line, e.sat, e.trailLine, e.label, e.glow].forEach(o => {
           if (o) { scene.remove(o); if (o.geometry) o.geometry.dispose(); if (o.material) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); } }
         });
         if (e.trailMat) e.trailMat.dispose();
@@ -349,13 +349,19 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
 
       if (e.trailCount > 1) {
         const posAttr = e.trailGeo.attributes.position;
+        const colorAttr = e.trailGeo.attributes.color;
         const start = e.trailHead % TRAIL_LEN;
         for (let i = 0; i < e.trailCount; i++) {
           const bufIdx = (start + i) % TRAIL_LEN;
           const p = e.trailBuf[bufIdx];
           posAttr.setXYZ(i, p.x, p.y, p.z);
+          // Gradient: oldest=dark, newest=bright
+          const fade = i / Math.max(1, e.trailCount - 1);
+          const tc = e.trailColor;
+          colorAttr.setXYZ(i, tc.r * fade, tc.g * fade, tc.b * fade);
         }
         posAttr.needsUpdate = true;
+        colorAttr.needsUpdate = true;
         e.trailGeo.setDrawRange(0, e.trailCount);
       }
 
