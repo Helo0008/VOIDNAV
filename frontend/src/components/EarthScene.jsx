@@ -275,16 +275,10 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
           existing.lineMat.color.setStyle(orbit.color);
           existing.satMat.color.setStyle(orbit.color);
           existing.trailColor.setStyle(orbit.color);
-          if (existing.glow) {
-            scene.remove(existing.glow);
-            if (existing.glow.material.map) existing.glow.material.map.dispose();
-            existing.glow.material.dispose();
-          }
+          disposeObj(existing.glow, scene);
           existing.glow = createGlowSprite(orbit.color);
           scene.add(existing.glow);
-          scene.remove(existing.label);
-          if (existing.label.material.map) existing.label.material.map.dispose();
-          existing.label.material.dispose();
+          disposeObj(existing.label, scene);
           existing.label = createLabelSprite(orbit.shortName, orbit.color);
           existing.label.visible = showLabels;
           scene.add(existing.label);
