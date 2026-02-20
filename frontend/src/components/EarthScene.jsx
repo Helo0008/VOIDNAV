@@ -427,6 +427,12 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
       const newPos = new THREE.Vector3().lerpVectors(e.points[idx], e.points[nextIdx], frac);
       e.sat.position.copy(newPos);
 
+      // Orient satellite along orbit tangent
+      const tangent = new THREE.Vector3().subVectors(e.points[nextIdx], e.points[idx]);
+      if (tangent.lengthSq() > 0.0001) {
+        e.sat.lookAt(newPos.clone().add(tangent.normalize()));
+      }
+
       // Pulse scale for highlighted satellite
       if (selectedOrbit?.id === e.orbit.id) {
         const pScale = 1.3 + Math.sin(pulseRef.current * 3) * 0.2;
