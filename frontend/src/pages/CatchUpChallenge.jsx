@@ -1,16 +1,38 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Navigation } from '../components/Navigation';
 import { EarthScene } from '../components/EarthScene';
+import { ArrowUp, ArrowDown, RotateCcw, HelpCircle } from 'lucide-react';
 
 const PHASE_TEXT = {
-  intro: { title: 'ORBITAL CATCH-UP', subtitle: 'Rendezvous with the target satellite.' },
-  wrong: { title: 'COUNTER-INTUITIVE!', subtitle: 'Speeding up raised your orbit — now you are SLOWER, not faster. In orbital mechanics, higher = slower.' },
-  hint: { title: 'THINK BACKWARDS', subtitle: 'To catch up, you need to DECELERATE. This drops you into a lower, faster orbit. Once you are ahead, accelerate back up.' },
-  winning: { title: 'CATCHING UP!', subtitle: 'You are in a lower orbit now — moving faster than the target. Watch the gap close.' },
-  success: { title: 'RENDEZVOUS!', subtitle: 'You matched orbits! This is exactly how real spacecraft dock. The Gemini program proved this in 1965.' },
+  intro: { 
+    title: 'ORBITAL CATCH-UP CHALLENGE', 
+    subtitle: 'Your mission: Rendezvous with the RED target satellite ahead of you. But there\'s a catch — speeding up won\'t help!',
+    hint: 'Use the thrust buttons below to change your orbit. Watch what happens to your speed when you change altitude.'
+  },
+  wrong: { 
+    title: 'COUNTER-INTUITIVE!', 
+    subtitle: 'You sped up, but now you\'re SLOWER! In orbit, higher altitude = slower orbital speed. You\'ve fallen further behind.',
+    hint: 'Think backwards: to catch up to something ahead of you in orbit, you need to go to a LOWER, faster orbit first.'
+  },
+  hint: { 
+    title: 'GETTING WARMER', 
+    subtitle: 'Now try the other direction. To catch up, you need to DROP to a lower orbit where you\'ll move FASTER than the target.',
+    hint: 'Lower orbit = Higher speed. Once you\'re ahead, boost back up to match the target\'s orbit.'
+  },
+  winning: { 
+    title: 'CATCHING UP!', 
+    subtitle: 'You\'re in a lower, faster orbit now! Watch the gap close as you gain on the target.',
+    hint: 'When the gap gets small, thrust PROGRADE to raise your orbit back to match the target.'
+  },
+  success: { 
+    title: 'RENDEZVOUS COMPLETE!', 
+    subtitle: 'You matched orbits with the target! This is exactly how real spacecraft dock — the Gemini program proved this in 1965.',
+    hint: 'Key insight: In orbit, slowing down makes you go faster, and speeding up makes you go slower. Counter-intuitive but essential for space travel!'
+  },
 };
 
-const BASE_RADIUS = 3.5;
+const BASE_RADIUS = 4.0;
+const INITIAL_GAP = 0.4; // radians ahead
 
 export default function CatchUpChallenge() {
   const [playerR, setPlayerR] = useState(BASE_RADIUS);
