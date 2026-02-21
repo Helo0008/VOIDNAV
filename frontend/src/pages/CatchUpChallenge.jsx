@@ -37,10 +37,11 @@ const INITIAL_GAP = 0.4; // radians ahead
 export default function CatchUpChallenge() {
   const [playerR, setPlayerR] = useState(BASE_RADIUS);
   const [playerAngle, setPlayerAngle] = useState(0);
-  const [targetAngle, setTargetAngle] = useState(0.35);
+  const [targetAngle, setTargetAngle] = useState(INITIAL_GAP);
   const [phase, setPhase] = useState('intro');
   const [thrustCount, setThrustCount] = useState(0);
   const [started, setStarted] = useState(false);
+  const [showHelp, setShowHelp] = useState(true);
   const animRef = useRef(null);
 
   const targetW = 1 / Math.pow(BASE_RADIUS, 1.5);
@@ -48,16 +49,18 @@ export default function CatchUpChallenge() {
   const resetChallenge = () => {
     setPlayerR(BASE_RADIUS);
     setPlayerAngle(0);
-    setTargetAngle(0.35);
+    setTargetAngle(INITIAL_GAP);
     setPhase('intro');
     setThrustCount(0);
     setStarted(false);
+    setShowHelp(true);
   };
 
   const thrustPrograde = () => {
     if (phase === 'success') return;
     setStarted(true);
-    setPlayerR(r => Math.min(r + 0.25, 5.5));
+    setShowHelp(false);
+    setPlayerR(r => Math.min(r + 0.35, 6.0));
     setThrustCount(c => c + 1);
     if (phase === 'intro' || phase === 'hint') setPhase('wrong');
   };
@@ -65,7 +68,8 @@ export default function CatchUpChallenge() {
   const thrustRetrograde = () => {
     if (phase === 'success') return;
     setStarted(true);
-    setPlayerR(r => Math.max(r - 0.25, 2.5));
+    setShowHelp(false);
+    setPlayerR(r => Math.max(r - 0.35, 2.8));
     setThrustCount(c => c + 1);
     if (phase === 'wrong') setPhase('hint');
     if (phase === 'intro') setPhase('winning');
