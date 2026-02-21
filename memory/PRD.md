@@ -12,16 +12,16 @@ Build an interactive website that helps teach different types of space orbits us
 ```
 frontend/src/
 ├── components/
-│   ├── EarthScene.jsx    # 3D scene: orbits, satellites, Hohmann animation, force vectors
+│   ├── EarthScene.jsx    # 3D scene: orbits, satellites, Hohmann animation, force vectors, Lagrange points
 │   ├── Navigation.jsx    # 7 nav items: Learn, Explore, Sandbox, Challenge, Quiz, Mission Log
 │   └── ui/               # Shadcn components
 ├── pages/
 │   ├── Home.jsx          # Landing with 3D hero
-│   ├── Learn.jsx         # Guided lessons + force vectors + free-fall explanation
+│   ├── Learn.jsx         # Guided lessons + force vectors + free-fall explanation + compact HUD
 │   ├── Explore.jsx       # Orbit builder + compare + Hohmann + GPS + progressive UI
 │   ├── Sandbox.jsx       # Mission-based orbit recommender
-│   ├── CatchUpChallenge.jsx  # Orbital rendezvous puzzle (decelerate-to-catch-up)
-│   ├── Quiz.jsx          # Gamified quizzes per orbit type
+│   ├── CatchUpChallenge.jsx  # Orbital rendezvous puzzle with improved UI/instructions
+│   ├── Quiz.jsx          # Gamified quizzes per orbit type + Back to Learn button
 │   └── Dashboard.jsx     # Progress tracking
 ├── data/orbits.js        # 11 orbit types + unlock thresholds
 └── hooks/useProgress.js  # XP, unlocks, localStorage
@@ -48,7 +48,15 @@ frontend/src/
 - **Force Vectors + Free-Fall Explanation:** Toggle on Learn page shows gravity (red arrow) + velocity (blue arrow) with explanation: "The satellite IS falling — but it moves sideways fast enough that Earth's surface curves away"
 - **Progressive UI:** Explore shows only 3 core parameters (semi-major axis, eccentricity, inclination) with Advanced Telemetry toggle for RAAN/Speed
 
+### Phase 5 — Bug Fixes & Polish (Feb 2026)
+- **Lagrange Points Visualization:** L-Points lesson now shows proper Sun-Earth system with all 5 Lagrange points (L1-L5) labeled, Sun with glow, Earth's orbit around Sun, pulsing markers
+- **Compact Learn HUD:** Reduced orbit info panel to ~54px height showing only essential info (orbit name, altitude, velocity) to avoid obstructing the 3D view
+- **Molniya Orbit Fix:** Corrected orbital parameters (semiMajor: 5.5, eccentricity: 0.6) so perigee (2.2 units) is outside Earth's surface (2.0 units)
+- **Quiz Navigation:** Added "Back to Learn" button always visible at top of Quiz page
+- **Challenge Page Improvements:** Added initial help overlay, comprehensive instructions, hints for each phase, detailed telemetry (gap %, speed differential, altitudes), clearer button labels
+
 ## Upcoming (P1)
+- **Camera Lock/Follow Mode:** Allow camera to lock onto and follow specific satellites or orbits
 - Kepler's 2nd law visual emphasis (area sweep visualization)
 - Orbit transfer path planning (user-selectable start/end orbits for Hohmann)
 - Progressive lesson unlocking tied to quiz mastery
