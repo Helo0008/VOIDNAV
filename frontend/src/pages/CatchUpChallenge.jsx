@@ -92,24 +92,29 @@ export default function CatchUpChallenge() {
     return () => cancelAnimationFrame(animRef.current);
   }, [started, playerR, targetW, phase]);
 
-  // Check win condition
+  // Check win condition - more generous
   useEffect(() => {
     if (!started) return;
     const diff = Math.abs(playerAngle - targetAngle);
     const gap = Math.min(diff, Math.PI * 2 - diff);
-    if (gap < 0.06 && Math.abs(playerR - BASE_RADIUS) < 0.3 && thrustCount > 2) {
+    // Win when gap is small AND player is close to target altitude
+    if (gap < 0.12 && Math.abs(playerR - BASE_RADIUS) < 0.5 && thrustCount > 2) {
       setPhase('success');
     }
   }, [playerAngle, targetAngle, playerR, started, thrustCount]);
 
+  // Calculate gap for display - show as percentage of full orbit ahead
   const angleDiff = targetAngle - playerAngle;
-  const gap = ((angleDiff % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-  const gapDeg = (gap * 180 / Math.PI).toFixed(1);
+  const gapRaw = ((angleDiff % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+  const gapDeg = (gapRaw * 180 / Math.PI).toFixed(1);
+  const gapPct = ((gapRaw / (Math.PI * 2)) * 100).toFixed(1);
   const playerSpeed = (1 / Math.pow(playerR, 0.5) * 7.8).toFixed(2);
   const targetSpeed = (1 / Math.pow(BASE_RADIUS, 0.5) * 7.8).toFixed(2);
+  const speedDiff = (parseFloat(playerSpeed) - parseFloat(targetSpeed)).toFixed(2);
+  const isGaining = parseFloat(speedDiff) > 0;
 
-  const playerOrbit = { id: 'player', shortName: 'YOU', name: 'Your Satellite', color: '#00F0FF', semiMajor: playerR, eccentricity: 0.001, inclination: 0.5, raan: 0, speed: 0.12 };
-  const targetOrbit = { id: 'target', shortName: 'TARGET', name: 'Target Satellite', color: '#FF3B30', semiMajor: BASE_RADIUS, eccentricity: 0.001, inclination: 0.5, raan: 0, speed: 0.12 };
+  const playerOrbit = { id: 'player', shortName: 'YOU', name: 'Your Satellite', color: '#00F0FF', semiMajor: playerR, eccentricity: 0.001, inclination: 0.5, raan: 0, speed: 0.15 };
+  const targetOrbit = { id: 'target', shortName: 'TARGET', name: 'Target Satellite', color: '#FF3B30', semiMajor: BASE_RADIUS, eccentricity: 0.001, inclination: 0.5, raan: 0, speed: 0.15 };
 
   const info = PHASE_TEXT[phase] || PHASE_TEXT.intro;
 
