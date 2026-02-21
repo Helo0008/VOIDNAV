@@ -490,6 +490,95 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
     };
   }, [scene, showForceVectors]);
 
+  // ─── Lagrange Points Visualization ────────────────────────────────────────
+  const lagrangeRef = useRef([]);
+  const showLagrange = activeOrbits.some(o => o?.id === 'lagrange');
+  
+  useEffect(() => {
+    // Clean up existing
+    lagrangeRef.current.forEach(obj => disposeObj(obj, scene));
+    lagrangeRef.current = [];
+    
+    if (!showLagrange) return;
+    
+    // Add Sun representation (to the left)
+    const sunGeo = new THREE.SphereGeometry(1.5, 32, 32);
+    const sunMat = new THREE.MeshBasicMaterial({ color: 0xFFDD44 });
+    const sun = new THREE.Mesh(sunGeo, sunMat);
+    sun.position.set(-18, 0, 0);
+    scene.add(sun);
+    lagrangeRef.current.push(sun);
+    
+    // Sun glow
+    const glowCanvas = document.createElement('canvas');
+    glowCanvas.width = 128; glowCanvas.height = 128;
+    const glowCtx = glowCanvas.getContext('2d');
+    const gradient = glowCtx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    gradient.addColorStop(0, '#FFDD4480');
+    gradient.addColorStop(0.3, '#FFaa2240');
+    gradient.addColorStop(1, 'rgba(0,0,0,0)');
+    glowCtx.fillStyle = gradient;
+    glowCtx.fillRect(0, 0, 128, 128);
+    const sunGlowMat = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(glowCanvas), transparent: true, opacity: 0.7 });
+    const sunGlow = new THREE.Sprite(sunGlowMat);
+    sunGlow.position.set(-18, 0, 0);
+    sunGlow.scale.set(8, 8, 1);
+    scene.add(sunGlow);
+    lagrangeRef.current.push(sunGlow);
+    
+    // Sun label
+    const sunLabel = createLabelSprite('SUN', '#FFD700');
+    sunLabel.position.set(-18, 2.5, 0);
+    scene.add(sunLabel);
+    lagrangeRef.current.push(sunLabel);
+    
+    // Earth orbit line (simplified, circular)
+    const earthOrbitRadius = 18;
+    const earthOrbitPoints = [];
+    for (let i = 0; i <= 64; i++) {
+      const angle = (i / 64) * Math.PI * 2;
+      earthOrbitPoints.push(new THREE.Vector3(
+        -18 + earthOrbitRadius * Math.cos(angle),
+        0,
+        earthOrbitRadius * Math.sin(angle)
+      ));
+    }
+    const earthOrbitGeo = new THREE.BufferGeometry().setFromPoints(earthOrbitPoints);
+    const earthOrbitMat = new THREE.LineBasicMaterial({ color: 0x4488FF, transparent: true, opacity: 0.25 });
+    const earthOrbitLine = new THREE.Line(earthOrbitGeo, earthOrbitMat);
+    scene.add(earthOrbitLine);
+    lagrangeRef.current.push(earthOrbitLine);
+    
+    // Add each Lagrange point
+    Object.entries(LAGRANGE_POINTS).forEach(([key, lp]) => {
+      const marker = createLagrangeMarker(lp.color);
+      marker.position.set(...lp.position);
+      scene.add(marker);
+      lagrangeRef.current.push(marker);
+      
+      const label = createLabelSprite(lp.label, lp.color);
+      label.position.set(lp.position[0], lp.position[1] + 0.7, lp.position[2]);
+      scene.add(label);
+      lagrangeRef.current.push(label);
+    });
+    
+    // Sun-Earth line
+    const lineGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(-18, 0, 0),
+      new THREE.Vector3(0, 0, 0)
+    ]);
+    const lineMat = new THREE.LineDashedMaterial({ color: 0xFFDD44, dashSize: 0.5, gapSize: 0.3, transparent: true, opacity: 0.4 });
+    const line = new THREE.Line(lineGeo, lineMat);
+    line.computeLineDistances();
+    scene.add(line);
+    lagrangeRef.current.push(line);
+    
+    return () => {
+      lagrangeRef.current.forEach(obj => disposeObj(obj, scene));
+      lagrangeRef.current = [];
+    };
+  }, [scene, showLagrange]);
+
   // ─── Animation loop ────────────────────────────────────────────────────────
   const pulseRef = useRef(0);
   useFrame((_, delta) => {
