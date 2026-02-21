@@ -76,14 +76,16 @@ export default function CatchUpChallenge() {
     if (phase === 'hint') setPhase('winning');
   };
 
-  // Animation loop
+  // Animation loop - more pronounced speed difference
   useEffect(() => {
     if (!started || phase === 'success') return;
     const loop = () => {
       const dt = 0.016;
+      // Kepler's 3rd law: angular velocity ∝ 1/r^1.5
       const playerW = 1 / Math.pow(playerR, 1.5);
-      setPlayerAngle(a => (a + playerW * dt * 0.6) % (Math.PI * 2));
-      setTargetAngle(a => (a + targetW * dt * 0.6) % (Math.PI * 2));
+      const speedMultiplier = 0.8; // Make the animation faster for visibility
+      setPlayerAngle(a => (a + playerW * dt * speedMultiplier) % (Math.PI * 2));
+      setTargetAngle(a => (a + targetW * dt * speedMultiplier) % (Math.PI * 2));
       animRef.current = requestAnimationFrame(loop);
     };
     animRef.current = requestAnimationFrame(loop);
