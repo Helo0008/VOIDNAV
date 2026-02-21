@@ -127,6 +127,27 @@ function createLabelSprite(text, color) {
   return sprite;
 }
 
+// Create a Lagrange point marker with pulsing glow
+function createLagrangeMarker(color) {
+  const group = new THREE.Group();
+  
+  // Core sphere
+  const coreGeo = new THREE.SphereGeometry(0.15, 16, 16);
+  const coreMat = new THREE.MeshBasicMaterial({ color });
+  const core = new THREE.Mesh(coreGeo, coreMat);
+  group.add(core);
+  
+  // Outer ring
+  const ringGeo = new THREE.RingGeometry(0.3, 0.35, 32);
+  const ringMat = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide, transparent: true, opacity: 0.6 });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.rotation.x = Math.PI / 2;
+  group.add(ring);
+  
+  group.userData = { coreMat, ringMat };
+  return group;
+}
+
 // Create a radial glow sprite for satellites
 function createGlowSprite(color) {
   const canvas = document.createElement('canvas');
