@@ -7,6 +7,15 @@ const EARTH_R = 2.0;
 const EARTH_TEXTURE_URL = 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/textures/planets/earth_atmos_2048.jpg';
 const TRAIL_LEN = 60;
 
+// Lagrange point positions (scaled for visualization, not to scale with actual distances)
+const LAGRANGE_POINTS = {
+  L1: { position: [-8, 0, 0], color: '#FCD34D', label: 'L1', description: 'Between Sun & Earth' },
+  L2: { position: [8, 0, 0], color: '#F87171', label: 'L2', description: 'Behind Earth (JWST)' },
+  L3: { position: [-25, 0, 0], color: '#A78BFA', label: 'L3', description: 'Opposite side of Sun' },
+  L4: { position: [-12, 0, 12], color: '#34D399', label: 'L4', description: 'Leading Trojan point' },
+  L5: { position: [-12, 0, -12], color: '#60A5FA', label: 'L5', description: 'Trailing Trojan point' },
+};
+
 export function computeOrbitPoints(semiMajor, eccentricity, inclination, raan, numPoints = 300) {
   const pts = [];
   const ecc = Math.min(Math.max(eccentricity || 0, 0), 0.99);
