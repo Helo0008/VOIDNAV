@@ -587,6 +587,18 @@ function SpaceScene({ activeOrbits, selectedOrbit, interactive, showLabels, came
     // Rotate Earth
     if (earthRef.current) earthRef.current.rotation.y += delta * 0.025;
 
+    // Pulse Lagrange markers
+    if (showLagrange && lagrangeRef.current.length > 0) {
+      lagrangeRef.current.forEach(obj => {
+        if (obj.isGroup && obj.userData?.ringMat) {
+          const pulse = 0.4 + Math.sin(pulseRef.current * 2) * 0.2;
+          obj.userData.ringMat.opacity = pulse;
+          const scale = 1 + Math.sin(pulseRef.current * 1.5) * 0.1;
+          obj.scale.setScalar(scale);
+        }
+      });
+    }
+
     // ── Hohmann transfer animation
     if (transferAnimRef.current) {
       const tr = transferAnimRef.current;
