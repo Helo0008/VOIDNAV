@@ -303,6 +303,7 @@ function ActiveQuiz({ orbitId, onFinish }) {
 
 export default function Quiz() {
   const { orbitId } = useParams();
+  const navigate = useNavigate();
   const [activeOrbit, setActiveOrbit] = useState(orbitId || null);
 
   useEffect(() => {
@@ -313,6 +314,28 @@ export default function Quiz() {
     <div style={{ minHeight: '100vh', background: '#030305' }}>
       <Navigation />
       <div style={{ paddingTop: '64px' }} className="grid-bg">
+        {/* Back to Learn button - always visible at top */}
+        <div style={{ maxWidth: '900px', margin: '0 auto', padding: '16px 24px 0' }}>
+          <button
+            onClick={() => navigate('/learn')}
+            data-testid="back-to-learn-btn"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg mb-4"
+            style={{ 
+              fontFamily: 'Rajdhani', 
+              fontWeight: 600, 
+              fontSize: '13px', 
+              textTransform: 'uppercase', 
+              letterSpacing: '0.08em', 
+              color: 'rgba(255,255,255,0.5)', 
+              background: 'rgba(255,255,255,0.05)', 
+              border: '1px solid rgba(255,255,255,0.1)', 
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            <ChevronRight size={14} style={{ transform: 'rotate(180deg)' }} /> Back to Learn
+          </button>
+        </div>
         {activeOrbit
           ? <ActiveQuiz orbitId={activeOrbit} onFinish={() => setActiveOrbit(null)} />
           : <OrbitSelector onSelect={setActiveOrbit} />

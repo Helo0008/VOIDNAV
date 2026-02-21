@@ -111,25 +111,23 @@ export default function Learn() {
               showForceVectors={showForces}
               cameraPosition={[0, 3, orbit?.semiMajor ? orbit.semiMajor * 2.2 : 10]}
             />
-            {/* Orbit info overlay */}
-            <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 10 }}>
-              <div className="hud-panel px-4 py-3" data-testid="orbit-info-panel">
-                <div className="flex items-center gap-2 mb-2">
-                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: orbit?.color }} />
-                  <span style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '16px', color: orbit?.color, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            {/* Orbit info overlay - compact version */}
+            <div style={{ position: 'absolute', top: '12px', left: '12px', zIndex: 10 }}>
+              <div className="hud-panel px-3 py-2" data-testid="orbit-info-panel" style={{ background: 'rgba(3,3,5,0.85)', backdropFilter: 'blur(8px)' }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: orbit?.color }} />
+                  <span style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '12px', color: orbit?.color, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                     {orbit?.shortName}
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+                <div className="flex gap-4 flex-wrap">
                   {[
                     ['ALT', orbit?.altitudeRange],
-                    ['PERIOD', orbit?.periodRange],
                     ['VEL', orbit?.velocity],
-                    ['INC', orbit?.inclinationRange],
                   ].map(([label, val]) => (
-                    <div key={label}>
-                      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em' }}>{label}</span>
-                      <div style={{ fontFamily: 'JetBrains Mono', fontSize: '11px', color: '#00F0FF' }}>{val}</div>
+                    <div key={label} className="flex items-center gap-1">
+                      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '8px', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em' }}>{label}:</span>
+                      <span style={{ fontFamily: 'JetBrains Mono', fontSize: '9px', color: '#00F0FF' }}>{val}</span>
                     </div>
                   ))}
                 </div>
