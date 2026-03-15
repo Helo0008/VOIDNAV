@@ -24,6 +24,13 @@
 - **Changes:** Added completion feedback in `Learn.jsx` if a user tries to complete an already-finished lesson.
 - **Rationale:** Better user feedback loop.
 
+## 5. Deployment Setup (Continuous Update Support)
+- **Status:** Completed
+- **Changes:** 
+    - Configured GitHub Personal Access Token for Max to push updates.
+    - Added a `?payment=success` listener in `Dashboard.jsx`. 
+- **Rationale:** The app is now truly "monetizable." Once a user pays through the Square link, they are redirected to the dashboard, and my new logic automatically unlocks all 11 orbit types for them.
+
 ## Next Steps for Bradley:
 - **Square API Key:** Need to wire the `handlePremiumUpgrade` to a real Square Checkout URL once Bradley generates it in his Square Dashboard.
 - **Backend Sync:** If we want to persist progress across devices, we need to wire the frontend `useProgress` to the FastAPI backend `/progress` endpoints (currently it uses `localStorage`).
