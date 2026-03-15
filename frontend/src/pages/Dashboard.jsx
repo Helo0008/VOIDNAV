@@ -1,20 +1,43 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Navigation } from '../components/Navigation';
 import { ORBITS, ORBIT_ORDER, ORBIT_UNLOCK_THRESHOLDS } from '../data/orbits';
 import { QUIZ_DATA } from '../data/quizData';
 import { useProgress } from '../hooks/useProgress';
-import { BookOpen, Brain, Lock, CheckCircle, Zap, Trophy, RotateCcw } from 'lucide-react';
+import { BookOpen, Brain, Lock, CheckCircle, Zap, Trophy, RotateCcw, Award } from 'lucide-react';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 const ACHIEVEMENTS = {
   first_100: { label: 'First Hundred', desc: 'Earned 100+ XP', icon: Zap, color: '#FFD700' },
   halfway: { label: 'Halfway There', desc: 'Earned 500+ XP', icon: Trophy, color: '#00FF94' },
   master: { label: 'Orbital Master', desc: 'Earned 1000+ XP', icon: Trophy, color: '#E879F9' },
+  premium: { label: 'Premium Member', desc: 'Unlocked all orbits', icon: Award, color: '#00F0FF' },
 };
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { progress, getQuizScore, isOrbitUnlocked, isLessonComplete, getCompletionPercent, resetProgress } = useProgress();
+  const location = useLocation();
+  const { progress, getQuizScore, isOrbitUnlocked, isLessonComplete, getCompletionPercent, resetProgress, unlockOrbit, addPoints } = useProgress();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('payment') === 'success') {
+      // Unlock all orbits
+      ORBIT_ORDER.forEach(id => unlockOrbit(id));
+      
+      // Give a point boost or a special achievement
+      if (!progress.achievements.includes('premium')) {
+        addPoints(0); // Just to trigger state update if needed, but achievements should be handled
+        toast.success('Premium Access Activated!', {
+          description: 'All 11 orbit types have been unlocked. Welcome to Mission Control, Commander.',
+          duration: 10000,
+        });
+      }
+      
+      // Clean up the URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [location, unlockOrbit, addPoints, progress.achievements]);
 
   const totalOrbits = ORBIT_ORDER.length;
   const unlockedCount = progress.unlockedOrbits.length;
