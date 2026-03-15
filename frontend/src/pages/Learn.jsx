@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { CreditCard, Rocket, BookOpen, Globe, Brain, BarChart3, Menu, X, Target } from 'lucide-react';
 import { Navigation } from '../components/Navigation';
 import { EarthScene } from '../components/EarthScene';
 import { ORBITS, ORBIT_ORDER } from '../data/orbits';
@@ -40,6 +41,9 @@ export default function Learn() {
         markLessonComplete(selectedId);
         addPoints(50);
         toast.success(`Lesson complete! +50 XP earned`, { icon: '🎓' });
+      } else {
+        // If already complete, maybe give some feedback
+        toast('Lesson already completed!', { icon: '✅' });
       }
     } else {
       setStepIndex(s => s + 1);
@@ -47,6 +51,17 @@ export default function Learn() {
   };
 
   const handleQuiz = () => navigate(`/quiz/${selectedId}`);
+
+  const handlePremiumUpgrade = () => {
+    toast.info('Redirecting to secure checkout...', {
+      description: 'Upgrade to OrbitLab Premium for advanced university-level content.',
+      icon: <CreditCard size={16} />,
+    });
+    // In a real app, this would redirect to Square Checkout API
+    setTimeout(() => {
+      window.open('https://square.link/u/dummy-link', '_blank');
+    }, 1500);
+  };
 
   return (
     <div style={{ height: '100vh', background: '#030305', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -178,6 +193,23 @@ export default function Learn() {
                 <p style={{ fontFamily: 'Outfit', fontSize: '14px', color: 'rgba(255,255,255,0.3)', textAlign: 'center' }}>
                   Earn more XP by completing quizzes to unlock this orbit type.
                 </p>
+                
+                <div className="mt-8 hud-panel p-6 border-cyan-500/30 bg-cyan-500/5 rounded-xl flex flex-col items-center max-w-sm">
+                  <div className="flex items-center gap-2 mb-4 text-cyan-400">
+                    <Award size={24} />
+                    <span className="font-bold uppercase tracking-wider">Premium Access</span>
+                  </div>
+                  <p className="text-center text-xs text-slate-400 mb-6 leading-relaxed">
+                    Don't want to wait? Unlock all 11 orbit types, advanced telemetry, and university-level flight challenges instantly.
+                  </p>
+                  <button 
+                    onClick={handlePremiumUpgrade}
+                    className="w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-bold uppercase tracking-tighter rounded-lg transition-colors flex items-center justify-center gap-2"
+                  >
+                    <CreditCard size={18} />
+                    Upgrade for $9.99
+                  </button>
+                </div>
               </div>
             ) : (
               <>
