@@ -1,9 +1,9 @@
-# OrbitLab Audit & Tweak Log - March 15, 2026
+# Orbit Ops Audit & Tweak Log - March 15, 2026
 
-## 1. Re-branding (Void Navigator -> OrbitLab)
+## 1. Re-branding (Void Navigator -> Orbit Ops)
 - **Status:** Completed
 - **Changes:** Updated `Home.jsx` hero text and `Navigation.jsx` logo text. 
-- **Rationale:** Aligns with Bradley's preferred name for deployment.
+- **Rationale:** Aligns with Bradley's chosen brand for deployment (orbitops.space).
 
 ## 2. Gamification & Progression (XP Gates)
 - **Status:** Completed

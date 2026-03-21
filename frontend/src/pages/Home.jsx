@@ -74,7 +74,7 @@ export default function Home() {
               style={{ fontFamily: 'Rajdhani, sans-serif', fontWeight: 700, fontSize: 'clamp(48px, 7vw, 96px)', lineHeight: 0.9, textTransform: 'uppercase', color: '#fff', letterSpacing: '-0.02em', marginBottom: '24px' }}
             >
               ORBIT<br />
-              <span style={{ color: '#00F0FF', textShadow: '0 0 40px rgba(0,240,255,0.5)' }}>LAB</span>
+              <span style={{ color: '#00F0FF', textShadow: '0 0 40px rgba(0,240,255,0.5)' }}>OPS</span>
             </h1>
 
             <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '18px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, marginBottom: '40px', maxWidth: '500px' }}>

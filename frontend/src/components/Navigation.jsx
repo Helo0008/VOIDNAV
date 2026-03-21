@@ -30,7 +30,7 @@ export function Navigation() {
             <Rocket size={16} color="#00F0FF" />
           </div>
           <span className="font-secondary font-bold text-lg tracking-widest uppercase text-white group-hover:text-cyan-400" style={{ fontFamily: 'Rajdhani, sans-serif', transition: 'color 0.2s' }}>
-            Orbit Lab
+            Orbit Ops
           </span>
         </Link>
 
